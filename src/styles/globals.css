@@ -1,0 +1,308 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   Design Tokens and CSS Variables
+   ============================================================================ */
+
+@layer base {
+  :root {
+    /* Background layers */
+    --graph-900: 10 13 19;
+    --graph-800: 15 20 25;
+    --graph-700: 21 27 38;
+    --graph-600: 26 35 50;
+    --graph-500: 36 45 63;
+    --graph-400: 46 58 78;
+
+    /* Text hierarchy */
+    --text-100: 243 244 246;
+    --text-200: 229 231 235;
+    --text-300: 156 163 175;
+    --text-400: 107 114 128;
+
+    /* Primary colors */
+    --primary: 99 181 255;
+    --primary-dark: 59 130 246;
+    --primary-light: 147 197 253;
+
+    /* Accent colors */
+    --accent: 181 255 99;
+    --accent-dark: 134 199 53;
+    --accent-light: 212 255 148;
+
+    /* Semantic colors */
+    --success: 16 185 129;
+    --warning: 255 165 0;
+    --error: 239 68 68;
+
+    /* Animation timing */
+    --animation-fast: 200ms;
+    --animation-normal: 400ms;
+    --animation-slow: 600ms;
+
+    /* Physics constants */
+    --spring-stiffness: 300;
+    --spring-damping: 30;
+    --bully-radius: 32px;
+
+    /* Graph rendering */
+    --max-visible-edges: 100;
+    --edge-fade-distance: 500px;
+  }
+
+  .dark {
+    --background: var(--graph-900);
+    --foreground: var(--text-100);
+  }
+}
+
+/* ============================================================================
+   Glassmorphism Components
+   ============================================================================ */
+
+@layer components {
+  /* Glass panel base */
+  .glass-panel {
+    @apply backdrop-blur-xl bg-background/70 border border-white/10 rounded-glass shadow-glass;
+  }
+
+  /* Glass card for blocks */
+  .glass-card {
+    @apply glass-panel p-4 transition-all duration-200;
+    background: linear-gradient(
+      135deg,
+      rgba(var(--graph-700), 0.7),
+      rgba(var(--graph-800), 0.5)
+    );
+  }
+
+  .glass-card:hover {
+    @apply shadow-glow-sm;
+    transform: translateY(-2px);
+  }
+
+  /* Glass button */
+  .glass-button {
+    @apply px-4 py-2 backdrop-blur-md bg-primary/20 border border-primary/30
+           rounded-lg text-primary-light hover:bg-primary/30 hover:shadow-glow-sm
+           transition-all duration-200 active:scale-95;
+  }
+
+  /* Block styles by type */
+  .block-note {
+    @apply border-l-4 border-l-text-300;
+  }
+
+  .block-requirement {
+    @apply border-l-4 border-l-warning;
+  }
+
+  .block-spec {
+    @apply border-l-4 border-l-primary;
+  }
+
+  .block-implementation {
+    @apply border-l-4 border-l-success;
+  }
+
+  .block-test {
+    @apply border-l-4 border-l-accent;
+  }
+
+  /* Immutability indicators */
+  .immutable-mutable {
+    @apply ring-2 ring-success/20;
+  }
+
+  .immutable-locked {
+    @apply ring-2 ring-warning/30;
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.2);
+  }
+
+  .immutable-immutable {
+    @apply ring-2 ring-error/40;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+  }
+
+  /* Tag badges */
+  .tag-badge {
+    @apply inline-flex items-center px-2 py-1 text-xs rounded-full
+           backdrop-blur-sm bg-white/10 border border-white/20
+           transition-all duration-200 hover:bg-white/20;
+  }
+
+  .tag-inheritable {
+    @apply italic opacity-70;
+  }
+
+  /* Edge styles */
+  .edge-structural {
+    stroke: rgba(var(--text-300), 0.4);
+    stroke-width: 2px;
+  }
+
+  .edge-semantic {
+    stroke: rgba(var(--primary), 0.6);
+    stroke-width: 1px;
+    stroke-dasharray: 5, 5;
+  }
+
+  /* HUD window */
+  .hud-window {
+    @apply fixed glass-panel p-4 min-w-[200px] max-w-[400px] z-50;
+    resize: both;
+    overflow: auto;
+  }
+
+  /* Loading skeleton */
+  .skeleton {
+    @apply animate-pulse bg-gradient-to-r from-graph-700 via-graph-600 to-graph-700;
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+}
+
+/* ============================================================================
+   Block Flip Animation
+   ============================================================================ */
+
+@layer utilities {
+  .block-3d-container {
+    perspective: 1000px;
+  }
+
+  .block-flipper {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .block-flipper.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .block-front,
+  .block-back {
+    position: absolute;
+    width: 100%;
+    backface-visibility: hidden;
+  }
+
+  .block-back {
+    transform: rotateY(180deg);
+  }
+
+  /* Physics-based drag */
+  .dragging {
+    cursor: grabbing !important;
+    transition: none !important;
+  }
+
+  .drag-preview {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+
+  /* Bully physics */
+  .bully-repulsion {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Performance optimizations */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .reduce-motion {
+    animation-duration: 0.01s !important;
+    transition-duration: 0.01s !important;
+  }
+}
+
+/* ============================================================================
+   Scrollbar Styling
+   ============================================================================ */
+
+@layer base {
+  /* Custom scrollbars for dark theme */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(var(--graph-800), 0.5);
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(var(--primary), 0.3);
+    border-radius: 5px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--primary), 0.5);
+  }
+}
+
+/* ============================================================================
+   Focus States (Accessibility)
+   ============================================================================ */
+
+@layer base {
+  /* Visible focus for keyboard navigation */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Skip to main content link */
+  .skip-link {
+    @apply absolute -top-10 left-4 z-[100] bg-primary text-white px-4 py-2 rounded;
+  }
+
+  .skip-link:focus {
+    @apply top-4;
+  }
+}
+
+/* ============================================================================
+   Print Styles
+   ============================================================================ */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .glass-panel {
+    background: white !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* ============================================================================
+   Motion Preferences
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
