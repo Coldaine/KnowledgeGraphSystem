@@ -1,6 +1,6 @@
 # Knowledge Graph System
 
-A sophisticated block-based knowledge management system with graph visualization, intelligent document assembly, and LLM-powered content processing.
+A sophisticated block-based knowledge management system with graph visualization, intelligent document assembly, LLM-powered content processing, and governance framework for human-AI collaboration.
 
 ![Version](https://img.shields.io/badge/version-0.1.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -8,16 +8,24 @@ A sophisticated block-based knowledge management system with graph visualization
 ![Next.js](https://img.shields.io/badge/Next.js-14.0-black)
 ![React](https://img.shields.io/badge/React-18.2-61dafb)
 
+> **Documentation**: [VISION.md](./VISION.md) | [ROADMAP.md](./ROADMAP.md) | [DEPLOYMENT.md](./DEPLOYMENT.md)
+
 ## 🌟 Features
 
 ### Core Capabilities
-- **Block-Based Architecture**: Everything is a "Block" - the atomic unit of knowledge
-- **Dual Relationship Model**: Structural relationships for document assembly + Semantic relationships for knowledge graphs
-- **Dynamic Document Assembly**: Compositor that traverses blocks to generate documents
+- **Block-Based Architecture**: Everything is a "Block" - the atomic unit of knowledge ([VISION: Principle 1](./VISION.md#principle-1-the-block-is-the-atomic-unit))
+- **Dual Relationship Model**: Structural relationships for document assembly + Semantic relationships for knowledge graphs ([VISION: Principle 2](./VISION.md#principle-2-dual-relationship-model))
+- **Dynamic Document Assembly**: Compositor that traverses blocks to generate documents with configurable depth ([VISION: Principle 3](./VISION.md#principle-3-configurable-depth-of-retrieval))
 - **LLM-Powered Chunking**: Intelligent document ingestion using Gemini API
 - **Graph Visualization**: React Flow-based interactive graph with physics simulation
 - **User-Composed Dashboards**: Build custom workspaces from widgets and filters
-- **Three-Tier Immutability**: Mutable, Locked, and Immutable protection levels
+- **Three-Tier Immutability with Authority Chain**: Mutable, Locked, and Immutable protection levels tied to authorization hierarchy ([VISION: Principle 4](./VISION.md#principle-4-three-tier-immutability-with-authority-chain))
+
+### Governance Framework (Planned)
+- **Agent Escalation Protocol**: Structured handling when AI agents encounter immutable constraints ([VISION: Protocol](./VISION.md#c-agent-escalation-protocol))
+- **Immutable Change Review**: Multi-perspective agentic review for changes to protected content ([VISION: Protocol](./VISION.md#d-immutable-change-review-protocol))
+- **Automated Inconsistency Detection**: Cadenced reviews for contradictions, redundancies, and orphans ([VISION: Process](./VISION.md#a-automated-review--inconsistency-detection))
+- **Comprehensive Audit Trail**: Full logging of all operations for compliance and debugging ([VISION: Principle 6](./VISION.md#principle-6-comprehensive-audit-trail))
 
 ### Key Interactions
 - **Double-Click Flip**: Blocks flip to reveal metadata on the back
