@@ -1,0 +1,68 @@
+{
+  "blocks": [
+    [
+      "note-1",
+      {
+        "id": "note-1",
+        "type": "NOTE",
+        "templateId": "default",
+        "title": "Welcome to the Knowledge Graph",
+        "content": "This is a sample note.",
+        "tags": ["tag-1", "tag-2"],
+        "immutability": "MUTABLE",
+        "state": "DRAFT",
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-01-01T00:00:00.000Z"
+      }
+    ],
+    [
+      "note-2",
+      {
+        "id": "note-2",
+        "type": "NOTE",
+        "templateId": "default",
+        "title": "Second Note",
+        "content": "This is another sample note.",
+        "tags": ["tag-2"],
+        "immutability": "MUTABLE",
+        "state": "DRAFT",
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-01-01T00:00:00.000Z"
+      }
+    ]
+  ],
+  "edges": [
+    [
+      "edge-1",
+      {
+        "id": "edge-1",
+        "fromBlockId": "note-1",
+        "toBlockId": "note-2",
+        "relationType": "REFERENCES",
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    ]
+  ],
+  "tags": [
+    [
+      "tag-1",
+      {
+        "id": "tag-1",
+        "label": "Welcome",
+        "group": "ORGANIZATIONAL",
+        "inheritable": true,
+        "color": "#3B82F6"
+      }
+    ],
+    [
+      "tag-2",
+      {
+        "id": "tag-2",
+        "label": "Getting Started",
+        "group": "ORGANIZATIONAL",
+        "inheritable": true,
+        "color": "#10B981"
+      }
+    ]
+  ]
+}
