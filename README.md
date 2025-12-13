@@ -8,7 +8,35 @@ A sophisticated block-based knowledge management system with graph visualization
 ![Next.js](https://img.shields.io/badge/Next.js-14.0-black)
 ![React](https://img.shields.io/badge/React-18.2-61dafb)
 
-## 🌟 Features
+---
+
+## Documentation
+
+This project follows **spec-based design** with immutable contracts. All decisions trace from principles to implementation.
+
+### Quick Navigation
+
+| Document | Description |
+|----------|-------------|
+| [Documentation Index](./docs/README.md) | Entry point to all documentation |
+| [Constitution](./docs/CONSTITUTION.md) | Immutable foundational principles |
+| [Vision](./docs/VISION.md) | Unified system vision |
+| [Contracts](./docs/contracts/README.md) | Immutable specifications |
+| [Epics](./docs/epics/README.md) | Strategic initiatives |
+| [Architecture Decisions](./docs/architecture/DECISIONS.md) | Technical decisions with rationale |
+
+### Document Hierarchy
+
+```
+CONSTITUTION → CONTRACTS → EPICS → STORIES → CODE
+   (Why)        (What)     (What)   (How)    (How)
+```
+
+Every feature traces back to a Contract. Every Contract traces back to a Constitutional Principle. This ensures we build what we planned and can explain why anything exists.
+
+---
+
+## Features
 
 ### Core Capabilities
 - **Block-Based Architecture**: Everything is a "Block" - the atomic unit of knowledge
