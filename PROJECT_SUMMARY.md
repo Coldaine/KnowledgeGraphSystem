@@ -217,3 +217,11 @@ The system is now ready for:
 ---
 
 *Built with passion for knowledge management and graph visualization.*
+
+## Key Differentiators
+- Tree-sitter integration (Phase 2.4): CST→Cypher MERGE for code block algos; batch ingest/index for perf.
+- Agent dispatch (Phase 4.1): agent-council ontology → GraphRAG schema blocks.
+
+## Integration Plan
+1. `npm i tree-sitter tree-sitter-javascript`; parse→Neo4j driver upsert.
+2. `./agent-council dispatch compositor.ts`; ingest inferred schema as root block.
