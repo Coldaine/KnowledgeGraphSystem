@@ -40,6 +40,17 @@ This roadmap outlines the planned development phases for the Knowledge Graph Sys
   - Batch node operations
   - Graph diff visualization
 
+### 2.4 Tree-sitter Integration (DECISION: MVP code parsing for subblocks easing node calcs)
+- [ ] **Tree-sitter Parsing**
+  - Parse code blocks to AST subnodes (functions/classes/CALLS)
+  - Easing graph algos: centrality/pathfinding on code relations
+  - Initial langs: TS/Python/Rust (per repo needs)
+
+### 2.5 Ontology Management (DECISION: LLM-infer dynamic schema from schema.org+ZO_WAY docs)
+- [ ] **Ontology Generation**
+  - LLM-infer/extend schema.org w/ domain (e.g. DevBlock: IMPLEMENTS→Impl→Test)
+  - Auto-evolve via Phase 4 agents (consistency/coverage checks)
+
 ### 2.2 Document Assembly Enhancement
 - [ ] **Advanced Traversal**
   - Custom traversal strategies
@@ -72,6 +83,12 @@ This roadmap outlines the planned development phases for the Knowledge Graph Sys
   - Read/write permissions
   - Team workspaces
   - Guest access
+
+### 2.4 Tree-sitter Algorithms
+- Parse code blocks → Tree-sitter CST; extract metrics (cyclomatic complexity, centrality via traversal).
+- Idempotent ingest: `MERGE (f:Function {name: ast.name}) ON CREATE SET f.complexity = ast.complexity, f.loc = ast.loc; MERGE (c:CALLS {from: caller.name, to: callee.name})` batch 5000 nodes/COMMIT avoid OOM.
+- Index `:Function(name)`, `:CALLS`; multi-hop <800ms @10k nodes.
+- Incremental: keystroke parse → delta upsert.
 
 **Estimated Timeline:** 8-10 weeks
 
@@ -134,6 +151,11 @@ This roadmap outlines the planned development phases for the Knowledge Graph Sys
   - Question answering
   - Semantic search
 
+### 4.1.2 GraphRAG (DECISION: Hypergraph over chunking per OG-RAG/code-graph-rag)
+- [ ] **GraphRAG Retrieval**
+  - Hypergraph/tree retrieval (Tree-sitter AST→entities/rels)
+  - Replace Gemini chunking; multi-hop via Neo4j Cypher
+
 ### 4.2 Intelligent Automation
 - [ ] **AI Agents**
   - Auto-tagging agent
@@ -146,6 +168,16 @@ This roadmap outlines the planned development phases for the Knowledge Graph Sys
   - Batch processing
   - Custom workflows
 
+### 4.2.5 Agent Council Dispatcher (DECISION: Prototype stub; tested: initial commit, no deps/docker, needs manual CLI setup)
+- [ ] **Agent Dispatcher**
+  - Integrate /repos/agent-council for Phase 4 auto-tag/rel-inf
+  - Status: prototype (Gemini/Jules/Qwen/Goose round-robin; persistent JSON state)
+
+### 4.4 Ontology Calc Agents (DECISION: Hardest part; dispatch council for schema calc/infer)
+- [ ] **Ontology Agents**
+  - Pick/extend ontology: LLM+Tree-sitter samples → schema
+  - Calc: cycle-free, coverage; evolve w/ graph ops (Phase 2→4)
+
 ### 4.3 Knowledge Extraction
 - [ ] **Content Processing**
   - PDF extraction
@@ -157,6 +189,10 @@ This roadmap outlines the planned development phases for the Knowledge Graph Sys
   - Concept extraction
   - Relationship extraction
   - Metadata enrichment
+
+### 4.1 Ontology Inference & Dispatch
+- Dispatch agent-council: `dispatch --ontology-infer src/lib/compositor.ts → GraphRAGSchema.1` (infer relations/tags).
+- Multi-agent: planner-worker (Sonnet→Haiku) validate schema → block provenance.
 
 **Estimated Timeline:** 12-14 weeks
 
@@ -330,4 +366,12 @@ We value your input! Please share:
 
 ---
 
+## Appendix: ZO_WAY Distilled Insights (DECISION: Ingest as seed blocks/templates)
+- **Feasibility-LocalKG.pdf**: LocalFirstKG → ingestion workflow block
+- **AI-Agent-Frameworks.pdf**: LangGraph/AutoGen → AgentCouncilTemplate
+- **AgenticCoding.pdf**: Tree-sitter KG-RAG → CodeParseOntology
+- **DocAwareAgents.pdf**: GraphRAG schema → RAGBestPractices
+
 *This roadmap is subject to change based on user feedback, technical constraints, and strategic priorities.*
+
+
