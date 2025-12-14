@@ -157,11 +157,20 @@ export const Block: React.FC<BlockProps> = ({
     <div className="block-3d-container w-80" ref={blockRef}>
       <motion.div
         className={cn(
-          'block-flipper relative h-48',
+          'block-flipper relative h-48 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none rounded-xl',
           isFlipped && 'flipped',
           isDragging && 'drag-preview'
         )}
         onDoubleClick={handleDoubleClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleDoubleClick();
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label={`Knowledge block: ${block.title}. Double click or press Enter to flip.`}
         whileHover={{ scale: isDragging ? 1 : 1.02 }}
         whileTap={{ scale: 0.98 }}
         initial={{ opacity: 0, y: 20 }}
