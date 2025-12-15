@@ -83,6 +83,15 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
     }));
   }, []);
 
+  // Calculate word and character count
+  const stats = React.useMemo(() => {
+    const text = editedBlock.content || '';
+    return {
+      chars: text.length,
+      words: text.trim() ? text.trim().split(/\s+/).length : 0,
+    };
+  }, [editedBlock.content]);
+
   // Get icon for block type
   const getTypeIcon = (type: BlockType) => {
     switch (type) {
@@ -135,6 +144,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
           <button
             onClick={onCancel}
             className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            aria-label="Close editor"
           >
             <X className="w-5 h-5 text-text-300" />
           </button>
@@ -201,9 +211,14 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
 
         {/* Content */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-text-200 mb-2">
-            Content (Markdown)
-          </label>
+          <div className="flex justify-between items-end mb-2">
+            <label className="block text-sm font-medium text-text-200">
+              Content (Markdown)
+            </label>
+            <div className="text-xs text-text-400 font-mono">
+              {stats.words} words | {stats.chars} chars
+            </div>
+          </div>
           <textarea
             value={editedBlock.content}
             onChange={(e) => handleChange('content', e.target.value)}
@@ -240,6 +255,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
             <button
               onClick={handleAddTag}
               className="px-4 py-2 bg-primary/20 text-primary border border-primary/30 rounded-lg hover:bg-primary/30 transition-colors"
+              aria-label="Add tag"
             >
               <Tag className="w-4 h-4" />
             </button>
