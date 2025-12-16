@@ -159,9 +159,25 @@ export const Block: React.FC<BlockProps> = ({
         className={cn(
           'block-flipper relative h-48',
           isFlipped && 'flipped',
-          isDragging && 'drag-preview'
+          isDragging && 'drag-preview',
+          'focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none rounded-xl'
         )}
         onDoubleClick={handleDoubleClick}
+        onClick={onSelect}
+        onKeyDown={(e) => {
+          if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.key === ' ') {
+              onSelect?.();
+            } else if (e.key === 'Enter') {
+              handleDoubleClick();
+            }
+          }
+        }}
+        tabIndex={0}
+        role="article"
+        aria-label={`Knowledge block: ${block.title}`}
         whileHover={{ scale: isDragging ? 1 : 1.02 }}
         whileTap={{ scale: 0.98 }}
         initial={{ opacity: 0, y: 20 }}
