@@ -109,7 +109,7 @@ TraversalProfile {
 **Critical addition from requirements document**: Immutability is not just a technical flag—it carries **authorization level context**. An `IMMUTABLE` block marked by a principal architect cannot be modified by a junior agent, even if that agent has general edit permissions.
 
 **Implementation Reference**: [types/index.ts:41-45](./src/types/index.ts) — `ImmutabilityLevel` enum
-**Extension Needed**: Add `authorityLevel` and `markedBy` fields (see [Type Extensions](#type-extensions-for-authority-chain))
+**Authority Extension**: [types/index.ts:470-476](./src/types/index.ts) — `BlockAuthority` interface with `authorityLevel`, `markedBy`, `markedAt`, and `justification` fields
 
 ---
 
@@ -142,7 +142,7 @@ TraversalProfile {
 - Conflict detection and resolution
 
 **Implementation Reference**: [types/index.ts:415-423](./src/types/index.ts) — `UserAction` interface
-**Extension Needed**: Add `EscalationEvent`, `ConflictRecord`, and enhanced audit types
+**Governance Extensions**: [types/index.ts:522-547](./src/types/index.ts) — `EscalationEvent`, [types/index.ts:640-664](./src/types/index.ts) — `ConflictRecord`, [types/index.ts:700-722](./src/types/index.ts) — `AuditEntry`
 
 ---
 
@@ -520,7 +520,7 @@ To avoid over-engineering, this vision explicitly leaves the following as implem
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0.0 | 2025-01-XX | Initial | Unified vision document created, merging technical foundation with governance framework |
+| 1.0.0 | 2025-12-16 | Initial | Unified vision document created, merging technical foundation with governance framework |
 
 ---
 

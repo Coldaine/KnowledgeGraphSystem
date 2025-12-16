@@ -75,6 +75,15 @@ export interface Block {
   state: BlockState;
   immutability: ImmutabilityLevel;
 
+  // Authority chain (optional - populated for LOCKED/IMMUTABLE blocks)
+  // See: BlockAuthority interface for full authority tracking
+  authority?: {
+    authorityLevel: AuthorityLevel;
+    markedBy: string;
+    markedAt: Date;
+    justification?: string;
+  };
+
   // Audit
   createdBy: string;
   createdAt: Date;
@@ -695,7 +704,23 @@ export type AuditActionType =
   | 'conflict.dismiss';
 
 /**
+ * Outcome of an audited action
+ */
+export type AuditOutcome = 'success' | 'failure' | 'partial';
+
+/**
+ * State snapshot for audit entries
+ * Uses Record<string, unknown> to enforce object shape while allowing
+ * flexibility for different target types (block, edge, tag, etc.)
+ */
+export type AuditStateSnapshot = Record<string, unknown> | null;
+
+/**
  * Enhanced audit entry with full context
+ *
+ * WHY outcome field: Compliance requires knowing not just what was attempted,
+ * but whether it succeeded. This enables filtering for failed operations
+ * during security analysis and incident investigation.
  */
 export interface AuditEntry {
   id: string;
@@ -711,9 +736,13 @@ export interface AuditEntry {
   targetType: 'block' | 'edge' | 'tag' | 'escalation' | 'conflict';
   targetId: string;
 
-  // Context
-  previousState?: any;
-  newState?: any;
+  // Outcome - required for compliance audit trails
+  outcome: AuditOutcome;
+  errorMessage?: string;  // Populated when outcome is 'failure' or 'partial'
+
+  // Context - state snapshots for reversibility
+  previousState?: AuditStateSnapshot;
+  newState?: AuditStateSnapshot;
   justification?: string;
 
   // Session tracking
