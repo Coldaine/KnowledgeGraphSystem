@@ -39,6 +39,15 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
   const [editedBlock, setEditedBlock] = useState<Block>({ ...block });
   const [newTag, setNewTag] = useState('');
 
+  // Calculate stats
+  const stats = React.useMemo(() => {
+    const text = editedBlock.content || '';
+    return {
+      chars: text.length,
+      words: text.trim() ? text.trim().split(/\s+/).length : 0,
+    };
+  }, [editedBlock.content]);
+
   // Handle field changes
   const handleChange = (field: keyof Block, value: any) => {
     setEditedBlock((prev) => ({
@@ -210,6 +219,10 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
             className="w-full h-48 px-4 py-2 bg-graph-700 border border-white/10 rounded-lg text-text-100 placeholder-text-400 focus:outline-none focus:border-primary/50 font-mono text-sm resize-none"
             placeholder="Enter block content in Markdown format..."
           />
+          <div className="flex justify-end gap-4 mt-2 text-xs text-text-300">
+            <span>{stats.words} words</span>
+            <span>{stats.chars} characters</span>
+          </div>
         </div>
 
         {/* Tags */}
