@@ -1,0 +1,3 @@
+## 2024-05-23 - Graph Node Accessibility
+**Learning:** Custom ReactFlow nodes (`Block.tsx` in card mode) were ignoring selection clicks and lacked keyboard accessibility. React Flow does not automatically make custom node content accessible or keyboard-interactive.
+**Action:** When creating custom nodes, always wrap the interactive element with `tabIndex={0}`, `role="article"`, and `aria-label`. Explicitly handle `onKeyDown` for Enter/Space to trigger primary actions (like flip) and `onClick` to ensure selection state is updated if the library doesn't handle it for the custom content structure. Added `focus-visible` styles for clear focus indication.
