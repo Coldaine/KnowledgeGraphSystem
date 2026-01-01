@@ -8,7 +8,7 @@
 import { Template, BlockType, StructuralRelation, SemanticRelation } from '@/types';
 
 // Default templates for each block type
-export const defaultTemplates: Map<string, Template> = new Map([
+const templateArray: [string, Template][] = [
   [
     'default',
     {
@@ -27,8 +27,8 @@ export const defaultTemplates: Map<string, Template> = new Map([
         },
       ],
       allowedRelations: {
-        outgoing: Object.values(StructuralRelation).concat(Object.values(SemanticRelation)),
-        incoming: Object.values(StructuralRelation).concat(Object.values(SemanticRelation)),
+        outgoing: [...Object.values(StructuralRelation), ...Object.values(SemanticRelation)],
+        incoming: [...Object.values(StructuralRelation), ...Object.values(SemanticRelation)],
       },
       inheritTags: true,
       defaultView: 'card',
@@ -452,7 +452,9 @@ export const defaultTemplates: Map<string, Template> = new Map([
       validators: [],
     },
   ],
-]);
+];
+
+export const defaultTemplates: Map<string, Template> = new Map(templateArray);
 
 // Template factory
 export class TemplateFactory {
