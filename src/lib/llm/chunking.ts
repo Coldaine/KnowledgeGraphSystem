@@ -70,7 +70,7 @@ export class LLMChunker {
       console.error('Chunking error:', error);
       return {
         plan: this.createFallbackPlan(source, config),
-        errors: [`LLM chunking failed: ${error.message}`],
+        errors: [`LLM chunking failed: ${(error as Error).message}`],
       };
     }
   }

@@ -296,7 +296,7 @@ export const useBlockStore = create<BlockStore>()(
           };
 
           collectInheritedTags(blockId);
-          return [...new Set(inheritedTags)]; // Remove duplicates
+          return Array.from(new Set(inheritedTags)); // Remove duplicates
         },
 
         // Selection Actions
@@ -440,14 +440,17 @@ export const useBlockStore = create<BlockStore>()(
       {
         name: 'knowledge-graph-storage',
         // Custom serialization for Maps
-        serialize: (state) =>
+        serialize: (storageValue) =>
           JSON.stringify({
-            ...state,
-            blocks: Array.from(state.blocks.entries()),
-            edges: Array.from(state.edges.entries()),
-            tags: Array.from(state.tags.entries()),
-            visibleBlockIds: Array.from(state.visibleBlockIds),
-            visibleEdgeIds: Array.from(state.visibleEdgeIds),
+            ...storageValue,
+            state: {
+              ...storageValue.state,
+              blocks: Array.from(storageValue.state.blocks.entries()),
+              edges: Array.from(storageValue.state.edges.entries()),
+              tags: Array.from(storageValue.state.tags.entries()),
+              visibleBlockIds: Array.from(storageValue.state.visibleBlockIds),
+              visibleEdgeIds: Array.from(storageValue.state.visibleEdgeIds),
+            }
           }),
         deserialize: (str) => {
           const parsed = JSON.parse(str);

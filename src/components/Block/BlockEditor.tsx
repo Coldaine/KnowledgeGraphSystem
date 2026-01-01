@@ -17,7 +17,7 @@ import {
   Code,
   TestTube,
   Database,
-  Notebook,
+  Book,
 } from 'lucide-react';
 import { Block, BlockType, ImmutabilityLevel, BlockState } from '@/types';
 import { cn } from '@/lib/utils';
@@ -99,7 +99,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
       case BlockType.DATA_SOURCE:
         return <Database className="w-4 h-4" />;
       case BlockType.MANIFEST:
-        return <Notebook className="w-4 h-4" />;
+        return <Book className="w-4 h-4" />;
       default:
         return <FileText className="w-4 h-4" />;
     }
