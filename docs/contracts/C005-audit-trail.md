@@ -308,6 +308,35 @@ Projections (queryable state):
 | Mutable log tables | INV-01: Append-only required |
 | No retention policy | INV-06: Must be defined |
 
+### 7.5 TypeScript Implementation Types
+
+The following types in [`src/types/index.ts`](../../src/types/index.ts) implement this contract:
+
+| Type | Purpose | Contract Mapping |
+|------|---------|------------------|
+| `ConflictType` | Extended conflict taxonomy | Section 5.2: Beyond contradiction-only |
+| `ConflictCriticality` | Severity classification | Section 5.4: Criticality Dashboard |
+| `ConflictStatus` | Resolution lifecycle | Section 5.3: Conflict Resolution Protocol |
+| `ConflictRecord` | Full conflict tracking | Section 5: Consistency Verification |
+| `AuditActionType` | Comprehensive action enum | Section 3.1: What Must Be Logged |
+| `AuditEntry` | Enhanced audit record | Section 3.2: Log Entry Schema |
+| `DecayCategory` | Knowledge freshness categories | Links to docs/knowledge-decay-strategy.md |
+| `BlockDecay` | Block-level decay tracking | Extends conflict detection with staleness |
+
+**Extended Conflict Taxonomy:**
+
+The contract focuses on contradiction detection. The implementation extends this with a richer taxonomy:
+
+```typescript
+type ConflictType =
+  | 'contradiction'  // Blocks with conflicting statements (per contract)
+  | 'redundancy'     // Semantically similar blocks that should merge
+  | 'orphan'         // Blocks with no relationships
+  | 'stale';         // Blocks not updated within staleness threshold
+```
+
+**WHY extend beyond contradiction:** Growing knowledge bases accumulate multiple failure modes. Orphan blocks indicate structural problems. Stale blocks require re-verification. This taxonomy enables comprehensive KnowledgeOps (see [E005](../epics/E005-knowledge-ops.md)).
+
 ---
 
 ## 8. Relationship to Other Contracts
