@@ -312,7 +312,36 @@ class Agent {
 - **Override Controls:** Clear buttons to halt agent operations
 - **Audit Log Browser:** Filterable view of agent actions
 
-### 8.3 Anti-Patterns
+### 8.3 TypeScript Implementation Types
+
+The following types in [`src/types/index.ts`](../../src/types/index.ts) implement this contract:
+
+| Type | Purpose | Contract Mapping |
+|------|---------|------------------|
+| `AgentTier` | Drone/Architect/Judge enum | Section 3.2: Tier Characteristics |
+| `AgentIdentity` | Agent identity with tier and clearance | Section 3: Three-Tier Agent Model |
+| `MotionToChange` | Agentic Chat record | Section 5: Agentic Chat Protocol |
+| `ReviewRecommendation` | Motion verdict types | Section 5.2: Process Flow |
+
+**MotionToChange Interface:**
+
+The `MotionToChange` type (formerly `AgenticReview`) implements the Agentic Chat protocol with adversarial roles:
+
+```typescript
+interface MotionToChange {
+  // Review perspectives - adversarial per Section 5.1
+  prosecutorArguments: string[];   // Arguments AGAINST the change
+  defenseArguments: string[];      // Arguments FOR the change
+  judgeVerdict: string;            // Balanced evaluation with rubric
+
+  recommendation: 'approve' | 'reject' | 'escalate_to_human';
+  // ...
+}
+```
+
+See [`src/types/index.ts:649-680`](../../src/types/index.ts) for the complete interface.
+
+### 8.4 Anti-Patterns
 
 | Anti-Pattern | Why It Violates C004 |
 |--------------|---------------------|

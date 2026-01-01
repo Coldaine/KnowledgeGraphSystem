@@ -249,6 +249,146 @@ Enable editing individual chunks without leaving the assembled view.
 
 ---
 
+### E003-S09: Authority-Aware Block Back Face
+
+**Satisfies:** C002 (authority visibility), [src/types/index.ts:BlockAuthority]
+
+**Description:**
+Extend the block back-face (revealed on double-click) to show authority chain information and recent escalation history. Users need to understand not just WHAT is protected, but WHO protected it and WHY.
+
+**Acceptance Criteria:**
+- [ ] Authority section shows: Protection level, Required authority, Marked by, Marked at
+- [ ] Justification field displayed for IMMUTABLE blocks
+- [ ] Recent escalations section shows count and summary (if any)
+- [ ] Click-through to escalation details
+- [ ] Authority section only appears when `immutability !== MUTABLE`
+
+**Visual Mockup:**
+```
+┌─────────────────────────────────────────┐
+│  METADATA                               │
+├─────────────────────────────────────────┤
+│  ID: abc-123        Template: note      │
+├─────────────────────────────────────────┤
+│  AUTHORITY                              │
+│  Protection: IMMUTABLE                  │
+│  Required Level: SENIOR                 │
+│  Marked By: @alice                      │
+│  Justification: "Core API contract..."  │
+├─────────────────────────────────────────┤
+│  RECENT ESCALATIONS (if any)            │
+│  ⚠ 2 agents blocked in last 7 days     │
+│  → Click to view escalation details     │
+└─────────────────────────────────────────┘
+```
+
+**WHY:** Escalation hotspots become visible; authority context enables informed decisions about whether to request changes.
+
+**Priority:** HIGH
+
+---
+
+### E003-S10: Visual Chunk Boundaries in Document View
+
+**Satisfies:** C003-INV-02 (chunk boundaries preserved in assembly)
+
+**Description:**
+Even in minimal/document view, blocks should have subtle visual boundaries that make the underlying semantic chunk structure apparent. This prevents accidental cross-block edits and maintains immutability visibility.
+
+**Acceptance Criteria:**
+- [ ] Subtle left border indicates chunk boundary (visible on hover)
+- [ ] Immutable blocks have distinct border color (error/red)
+- [ ] Locked blocks have warning/yellow border
+- [ ] Block type indicator appears on hover (small, non-intrusive)
+- [ ] `data-block-id` attribute for debugging/inspection
+
+**Implementation Notes:**
+- Extend minimal viewMode in Block.tsx
+- Use CSS: `border-l-2 border-transparent hover:border-text-400/30`
+- Color by immutability: `block.immutability === IMMUTABLE && 'border-l-error/50'`
+
+**WHY:** Users develop spatial awareness of document structure—they'll recognize "this red-bordered section is the immutable API contract" and navigate accordingly.
+
+**Priority:** HIGH
+
+---
+
+### E003-S11: Graph View Authority Stratification
+
+**Satisfies:** C002 (authority hierarchy visualization)
+
+**Description:**
+Add a "Stratification View" layout option that layers nodes by authority level on the Y-axis. This makes authority hierarchy explicit and helps trace escalation paths.
+
+**Acceptance Criteria:**
+- [ ] New layout algorithm option: `'stratified'` in View config
+- [ ] Y-position determined by `AuthorityLevel` (SYSTEM at top, AGENT at bottom)
+- [ ] X-position determined by existing force-directed algorithm
+- [ ] Semantic relationships shown as arrows crossing layers
+- [ ] Toggle between standard and stratified views
+
+**Visual Mockup:**
+```
+       ┌─────────────────────────────────────────┐
+       │  SYSTEM (unreachable by normal users)   │ ← Top layer
+       └─────────────────────────────────────────┘
+                          ↓
+     ┌─────────────────────────────────────────────┐
+     │  PRINCIPAL (strategic, immutable by design) │
+     └─────────────────────────────────────────────┘
+                          ↓
+   ┌─────────────────────────────────────────────────┐
+   │  SENIOR (reviewed content, locked by default)   │
+   └─────────────────────────────────────────────────┘
+                          ↓
+ ┌─────────────────────────────────────────────────────┐
+ │  CONTRIBUTOR (standard content, mutable)            │
+ └─────────────────────────────────────────────────────┘
+```
+
+**WHY:** Users immediately see what content is "above" their authority level. Agent debugging becomes visual—tracing up shows exactly which higher-authority block caused conflict.
+
+**Priority:** MEDIUM
+
+---
+
+### E003-S12: Escalation Hotspot Highlighting
+
+**Satisfies:** C002-INV-05 (escalation visibility), [src/types/index.ts:EscalationEvent]
+
+**Description:**
+Blocks that frequently cause agent escalations should be visually distinct in graph view, with a badge showing escalation count and a pulsing glow effect.
+
+**Acceptance Criteria:**
+- [ ] Track escalation count per block in state
+- [ ] Hotspot threshold: 3+ escalations in 7 days
+- [ ] Pulsing glow effect on hotspot blocks
+- [ ] Badge showing escalation count
+- [ ] Click on badge to see escalation details
+- [ ] Hotspots visible in all graph layouts (including stratified)
+
+**Visual Mockup:**
+```
+Normal Block:       Escalation Hotspot:
+┌─────────┐         ┌─────────┐
+│         │         │  ⚠ 5    │  ← Escalation count badge
+│  Title  │         │  Title  │
+│         │         │         │
+└─────────┘         └─────────┘
+                    └── pulsing glow ──┘
+```
+
+**Implementation Notes:**
+- Add `isEscalationHotspot` computed property
+- Apply `shadow-glow-error animate-pulse` CSS
+- Consider performance with many hotspots
+
+**WHY:** Escalation clusters are signals that requirements may need clarification. By addressing hotspots, users reduce future agent friction.
+
+**Priority:** MEDIUM
+
+---
+
 ## 4. Dependencies
 
 ### Upstream Dependencies
@@ -287,8 +427,8 @@ Enable editing individual chunks without leaving the assembled view.
 
 | Priority | Stories | Rationale |
 |----------|---------|-----------|
-| HIGH | S01, S04, S06, S08 | Core UX — readable + discoverable |
-| MEDIUM | S02, S03, S05 | Enhanced control — power users |
+| HIGH | S01, S04, S06, S08, S09, S10 | Core UX — readable + discoverable + authority visibility |
+| MEDIUM | S02, S03, S05, S11, S12 | Enhanced control — power users + governance visualization |
 | LOW | S07 | Advanced editing — Phase 3 |
 
 ---

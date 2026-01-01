@@ -246,7 +246,33 @@ function validateWrite(principal: Principal, chunk: Chunk, newContent: Content):
 }
 ```
 
-### 8.3 Anti-Patterns
+### 8.3 TypeScript Implementation Types
+
+The following types in [`src/types/index.ts`](../../src/types/index.ts) implement this contract:
+
+| Type | Purpose | Contract Mapping |
+|------|---------|------------------|
+| `AuthorityLevel` | 6-level enum for principal roles | Maps organizational hierarchy to clearance |
+| `BlockAuthority` | Extended authority tracking | INV-C002-01: Explicit level assignment with context |
+| `EscalationErrorType` | 5-tier error classification | Section 5.2: Formal Review Rubric |
+| `EscalationStatus` | Escalation lifecycle states | Section 5.3: Resolution Outcomes |
+| `EscalationEvent` | Full escalation record | Section 5.4: Logging Requirements |
+| `AgentTier` | Drone/Architect/Judge mapping | Section 6.1: Agent Clearance Mapping |
+| `AgentIdentity` | Agent identity with tier and clearance | Section 6: Agent-Specific Rules |
+
+**Key Design Decision — Dual Classification:**
+
+The contract defines a 3-tier content protection model (Mutable/Locked/Immutable). The `AuthorityLevel` enum adds a 6-level principal classification:
+
+```
+Content Protection (ImmutabilityLevel):  Mutable < Locked < Immutable
+Principal Authority (AuthorityLevel):    VIEWER < AGENT < CONTRIBUTOR < SENIOR < PRINCIPAL < SYSTEM
+Agent Tiers (AgentTier):                 DRONE(1) < ARCHITECT(2) < JUDGE(3)
+```
+
+This allows expressing rules like "IMMUTABLE to agents but LOCKED to contributors."
+
+### 8.4 Anti-Patterns
 
 | Anti-Pattern | Why It Violates C002 |
 |--------------|---------------------|
