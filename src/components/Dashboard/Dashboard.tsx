@@ -7,7 +7,7 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import GridLayout, { Layout, Layouts } from 'react-grid-layout';
+// import GridLayout, { Layout, Layouts } from 'react-grid-layout';
 import {
   Plus,
   Settings,
@@ -26,8 +26,8 @@ import { Dashboard as DashboardType, DashboardWidget, FilterConfig, BlockType } 
 import { useBlockStore } from '@/stores/blockStore';
 import { Block } from '../Block/Block';
 import { cn } from '@/lib/utils';
-import 'react-grid-layout/css/styles.css';
-import 'react-resizable/css/styles.css';
+// import 'react-grid-layout/css/styles.css';
+// import 'react-resizable/css/styles.css';
 
 interface DashboardProps {
   dashboard?: DashboardType;
@@ -218,43 +218,43 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [widgets, setWidgets] = useState<DashboardWidget[]>(
     dashboard?.widgets || []
   );
-  const [layouts, setLayouts] = useState<Layouts>({});
+  // const [layouts, setLayouts] = useState<Layouts>({});
   const [editMode, setEditMode] = useState(false);
   const [showAddWidget, setShowAddWidget] = useState(false);
 
   // Convert widgets to grid layout items
-  const layoutItems: Layout[] = widgets.map((widget) => ({
-    i: widget.id,
-    x: widget.position.x,
-    y: widget.position.y,
-    w: widget.position.w,
-    h: widget.position.h,
-    minW: 2,
-    minH: 2,
-  }));
+  // const layoutItems: Layout[] = widgets.map((widget) => ({
+  //   i: widget.id,
+  //   x: widget.position.x,
+  //   y: widget.position.y,
+  //   w: widget.position.w,
+  //   h: widget.position.h,
+  //   minW: 2,
+  //   minH: 2,
+  // }));
 
   // Handle layout changes
-  const handleLayoutChange = useCallback(
-    (layout: Layout[]) => {
-      const updatedWidgets = widgets.map((widget) => {
-        const layoutItem = layout.find((l) => l.i === widget.id);
-        if (layoutItem) {
-          return {
-            ...widget,
-            position: {
-              x: layoutItem.x,
-              y: layoutItem.y,
-              w: layoutItem.w,
-              h: layoutItem.h,
-            },
-          };
-        }
-        return widget;
-      });
-      setWidgets(updatedWidgets);
-    },
-    [widgets]
-  );
+  // const handleLayoutChange = useCallback(
+  //   (layout: Layout[]) => {
+  //     const updatedWidgets = widgets.map((widget) => {
+  //       const layoutItem = layout.find((l) => l.i === widget.id);
+  //       if (layoutItem) {
+  //         return {
+  //           ...widget,
+  //           position: {
+  //             x: layoutItem.x,
+  //             y: layoutItem.y,
+  //             w: layoutItem.w,
+  //             h: layoutItem.h,
+  //           },
+  //         };
+  //       }
+  //       return widget;
+  //     });
+  //     setWidgets(updatedWidgets);
+  //   },
+  //   [widgets]
+  // );
 
   // Add new widget
   const addWidget = useCallback(
@@ -349,8 +349,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* Widget Grid */}
-      <div className="p-4">
-        <GridLayout
+      <div className="p-4 grid grid-cols-3 gap-4">
+        {/* <GridLayout
           className="layout"
           layout={layoutItems}
           cols={12}
@@ -360,9 +360,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
           isResizable={editMode}
           onLayoutChange={handleLayoutChange}
           draggableHandle=".cursor-move"
-        >
+        > */}
           {widgets.map((widget) => (
-            <div key={widget.id}>
+            <div key={widget.id} className="min-h-[200px]">
               <Widget
                 widget={widget}
                 onRemove={removeWidget}
@@ -370,7 +370,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               />
             </div>
           ))}
-        </GridLayout>
+        {/* </GridLayout> */}
       </div>
 
       {/* Add Widget Modal */}
