@@ -17,7 +17,7 @@ import {
   Code,
   TestTube,
   Database,
-  Notebook,
+  Book,
 } from 'lucide-react';
 import { Block, BlockType, ImmutabilityLevel, BlockState } from '@/types';
 import { cn } from '@/lib/utils';
@@ -99,7 +99,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
       case BlockType.DATA_SOURCE:
         return <Database className="w-4 h-4" />;
       case BlockType.MANIFEST:
-        return <Notebook className="w-4 h-4" />;
+        return <Book className="w-4 h-4" />;
       default:
         return <FileText className="w-4 h-4" />;
     }
@@ -201,9 +201,16 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
 
         {/* Content */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-text-200 mb-2">
-            Content (Markdown)
-          </label>
+          <div className="flex justify-between items-center mb-2">
+            <label className="block text-sm font-medium text-text-200">
+              Content (Markdown)
+            </label>
+            <span className="text-xs text-text-400">
+              {editedBlock.content.length} chars •{' '}
+              {editedBlock.content.trim().split(/\s+/).filter(Boolean).length}{' '}
+              words
+            </span>
+          </div>
           <textarea
             value={editedBlock.content}
             onChange={(e) => handleChange('content', e.target.value)}
