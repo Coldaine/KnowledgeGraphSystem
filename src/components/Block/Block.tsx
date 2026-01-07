@@ -13,9 +13,6 @@ import {
   Shield,
   Edit3,
   Trash2,
-  Link2,
-  Tag as TagIcon,
-  ChevronRight
 } from 'lucide-react';
 import { Block as BlockType, ImmutabilityLevel, BlockType as BType } from '@/types';
 import { cn } from '@/lib/utils';
@@ -121,12 +118,21 @@ export const Block: React.FC<BlockProps> = ({
     return (
       <div
         className={cn(
-          'glass-card p-2 cursor-pointer',
+          'glass-card p-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary',
           getTypeColor(),
           isSelected && 'ring-2 ring-primary',
           className
         )}
         onClick={onSelect}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onSelect?.();
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label={`Select block: ${block.title}`}
       >
         <div className="flex items-center gap-2">
           <ImmutabilityIcon />
@@ -154,7 +160,21 @@ export const Block: React.FC<BlockProps> = ({
 
   // Full card rendering with flip animation
   return (
-    <div className="block-3d-container w-80" ref={blockRef}>
+    <div
+      className="block-3d-container w-80 focus-visible:outline-none rounded-xl focus-visible:ring-2 focus-visible:ring-primary"
+      ref={blockRef}
+      tabIndex={0}
+      role="article"
+      aria-label={`Knowledge block: ${block.title}. Press Enter or Space to flip and select.`}
+      onClick={onSelect}
+      onKeyDown={(e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) {
+          e.preventDefault();
+          handleDoubleClick();
+          onSelect?.();
+        }
+      }}
+    >
       <motion.div
         className={cn(
           'block-flipper relative h-48',
@@ -196,8 +216,9 @@ export const Block: React.FC<BlockProps> = ({
                 e.stopPropagation();
                 onEdit?.();
               }}
-              className="p-1 hover:bg-white/10 rounded transition-colors"
+              className="p-1 hover:bg-white/10 rounded transition-colors focus-visible:ring-2 focus-visible:ring-primary"
               disabled={block.immutability === ImmutabilityLevel.IMMUTABLE}
+              aria-label="More options"
             >
               <MoreVertical className="w-4 h-4 text-text-300" />
             </button>
@@ -294,17 +315,25 @@ export const Block: React.FC<BlockProps> = ({
             {/* Actions */}
             <div className="flex gap-2 pt-2 border-t border-white/10">
               <button
-                onClick={() => setIsEditing(true)}
-                className="flex-1 glass-button text-xs py-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditing(true);
+                }}
+                className="flex-1 glass-button text-xs py-1 focus-visible:ring-2 focus-visible:ring-primary"
                 disabled={block.immutability === ImmutabilityLevel.IMMUTABLE}
+                aria-label="Edit block"
               >
                 <Edit3 className="w-3 h-3 mr-1 inline" />
                 Edit
               </button>
               <button
-                onClick={onDelete}
-                className="flex-1 glass-button text-xs py-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete?.();
+                }}
+                className="flex-1 glass-button text-xs py-1 focus-visible:ring-2 focus-visible:ring-primary"
                 disabled={block.immutability !== ImmutabilityLevel.MUTABLE}
+                aria-label="Delete block"
               >
                 <Trash2 className="w-3 h-3 mr-1 inline" />
                 Delete
