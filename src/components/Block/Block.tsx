@@ -157,11 +157,20 @@ export const Block: React.FC<BlockProps> = ({
     <div className="block-3d-container w-80" ref={blockRef}>
       <motion.div
         className={cn(
-          'block-flipper relative h-48',
+          'block-flipper relative h-48 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none rounded-xl',
           isFlipped && 'flipped',
           isDragging && 'drag-preview'
         )}
+        role="button"
+        tabIndex={0}
+        aria-label={`Knowledge block: ${block.title}`}
         onDoubleClick={handleDoubleClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleDoubleClick();
+          }
+        }}
         whileHover={{ scale: isDragging ? 1 : 1.02 }}
         whileTap={{ scale: 0.98 }}
         initial={{ opacity: 0, y: 20 }}
@@ -198,6 +207,7 @@ export const Block: React.FC<BlockProps> = ({
               }}
               className="p-1 hover:bg-white/10 rounded transition-colors"
               disabled={block.immutability === ImmutabilityLevel.IMMUTABLE}
+              aria-label="More options"
             >
               <MoreVertical className="w-4 h-4 text-text-300" />
             </button>
@@ -297,6 +307,7 @@ export const Block: React.FC<BlockProps> = ({
                 onClick={() => setIsEditing(true)}
                 className="flex-1 glass-button text-xs py-1"
                 disabled={block.immutability === ImmutabilityLevel.IMMUTABLE}
+                aria-label="Edit block"
               >
                 <Edit3 className="w-3 h-3 mr-1 inline" />
                 Edit
@@ -305,6 +316,7 @@ export const Block: React.FC<BlockProps> = ({
                 onClick={onDelete}
                 className="flex-1 glass-button text-xs py-1"
                 disabled={block.immutability !== ImmutabilityLevel.MUTABLE}
+                aria-label="Delete block"
               >
                 <Trash2 className="w-3 h-3 mr-1 inline" />
                 Delete
