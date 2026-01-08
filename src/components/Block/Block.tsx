@@ -154,7 +154,19 @@ export const Block: React.FC<BlockProps> = ({
 
   // Full card rendering with flip animation
   return (
-    <div className="block-3d-container w-80" ref={blockRef}>
+    <div
+      className="block-3d-container w-80 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-xl"
+      ref={blockRef}
+      role="article"
+      aria-label={`${block.title} - ${block.type} block. Press Enter or Space to flip for details.`}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleDoubleClick();
+        }
+      }}
+    >
       <motion.div
         className={cn(
           'block-flipper relative h-48',
