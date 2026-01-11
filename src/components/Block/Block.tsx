@@ -159,8 +159,18 @@ export const Block: React.FC<BlockProps> = ({
         className={cn(
           'block-flipper relative h-48',
           isFlipped && 'flipped',
-          isDragging && 'drag-preview'
+          isDragging && 'drag-preview',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-graph-900 rounded-xl'
         )}
+        tabIndex={0}
+        role="button"
+        aria-label={`${block.title}. Double click or press Enter to flip for details.`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleDoubleClick();
+          }
+        }}
         onDoubleClick={handleDoubleClick}
         whileHover={{ scale: isDragging ? 1 : 1.02 }}
         whileTap={{ scale: 0.98 }}
