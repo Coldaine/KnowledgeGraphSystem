@@ -11,9 +11,9 @@ import ReactFlow, {
   Edge as FlowEdge,
   ReactFlowProvider,
   Background,
+  BackgroundVariant,
   Controls,
   MiniMap,
-  Panel,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -205,7 +205,7 @@ export const GraphView: React.FC = () => {
   const onConnect = useCallback(
     (params: Connection) => {
       if (params.source && params.target) {
-        createEdge(params.source, params.target, StructuralRelation.LINKS);
+        createEdge(params.source, params.target, SemanticRelation.LINKS);
       }
     },
     [createEdge]
@@ -288,7 +288,7 @@ export const GraphView: React.FC = () => {
           <Background
             color="rgba(99, 181, 255, 0.05)"
             gap={32}
-            variant="dots"
+            variant={BackgroundVariant.Dots}
             size={1}
           />
 
@@ -326,18 +326,18 @@ export const GraphView: React.FC = () => {
           />
 
           {/* Custom Controls Panel */}
-          <Panel position="top-left" className="space-y-2">
+          <div className="absolute top-4 left-4 space-y-2 z-10">
             <GraphControls />
-          </Panel>
+          </div>
 
           {/* Performance Monitor */}
-          <Panel position="bottom-right" className="glass-panel p-2">
+          <div className="absolute bottom-4 right-4 glass-panel p-2 z-10">
             <div className="text-xs text-text-300">
               <div>FPS: {fps.toFixed(0)}</div>
               <div>Nodes: {nodes.length}</div>
               <div>Edges: {flowEdges.length}</div>
             </div>
-          </Panel>
+          </div>
         </ReactFlow>
       </ReactFlowProvider>
     </div>

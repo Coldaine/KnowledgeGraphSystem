@@ -7,7 +7,7 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import GridLayout, { Layout, Layouts } from 'react-grid-layout';
+import GridLayout, { Layout } from 'react-grid-layout';
 import {
   Plus,
   Settings,
@@ -218,12 +218,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [widgets, setWidgets] = useState<DashboardWidget[]>(
     dashboard?.widgets || []
   );
-  const [layouts, setLayouts] = useState<Layouts>({});
   const [editMode, setEditMode] = useState(false);
   const [showAddWidget, setShowAddWidget] = useState(false);
 
   // Convert widgets to grid layout items
-  const layoutItems: Layout[] = widgets.map((widget) => ({
+  const layoutItems: Layout = widgets.map((widget) => ({
     i: widget.id,
     x: widget.position.x,
     y: widget.position.y,
@@ -235,7 +234,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   // Handle layout changes
   const handleLayoutChange = useCallback(
-    (layout: Layout[]) => {
+    (layout: Layout) => {
       const updatedWidgets = widgets.map((widget) => {
         const layoutItem = layout.find((l) => l.i === widget.id);
         if (layoutItem) {
@@ -353,13 +352,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <GridLayout
           className="layout"
           layout={layoutItems}
-          cols={12}
-          rowHeight={60}
+          gridConfig={{ cols: 12, rowHeight: 60 }}
           width={1200}
-          isDraggable={editMode}
-          isResizable={editMode}
+          dragConfig={{ enabled: editMode, handle: '.cursor-move' }}
+          resizeConfig={{ enabled: editMode }}
           onLayoutChange={handleLayoutChange}
-          draggableHandle=".cursor-move"
         >
           {widgets.map((widget) => (
             <div key={widget.id}>

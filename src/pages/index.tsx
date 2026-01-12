@@ -39,23 +39,16 @@ export default function Home() {
         setShowHelp(!showHelp);
       }
       if (e.key === 'g' && !e.ctrlKey && !e.metaKey) {
-        const next = e.key;
-        setTimeout(() => {
-          switch (next) {
-            case 'g':
-              setViewMode('graph');
-              break;
-            case 'd':
-              setViewMode('document');
-              break;
-            case 'b':
-              setViewMode('brainstorm');
-              break;
-            case 'f':
-              setViewMode('folder');
-              break;
-          }
-        }, 100);
+        setViewMode('graph');
+      }
+      if (e.key === 'd' && !e.ctrlKey && !e.metaKey) {
+        setViewMode('document');
+      }
+      if (e.key === 'b' && !e.ctrlKey && !e.metaKey) {
+        setViewMode('brainstorm');
+      }
+      if (e.key === 'f' && !e.ctrlKey && !e.metaKey) {
+        setViewMode('folder');
       }
       if (e.key === 'h' && e.ctrlKey) {
         setShowHUD(!showHUD);
