@@ -120,13 +120,24 @@ export const Block: React.FC<BlockProps> = ({
   if (viewMode === 'compact') {
     return (
       <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Knowledge block: ${block.title}`}
         className={cn(
-          'glass-card p-2 cursor-pointer',
+          'glass-card p-2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
           getTypeColor(),
           isSelected && 'ring-2 ring-primary',
           className
         )}
         onClick={onSelect}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (e.target === e.currentTarget) {
+              onSelect?.();
+            }
+          }
+        }}
       >
         <div className="flex items-center gap-2">
           <ImmutabilityIcon />
@@ -156,12 +167,24 @@ export const Block: React.FC<BlockProps> = ({
   return (
     <div className="block-3d-container w-80" ref={blockRef}>
       <motion.div
+        role="button"
+        tabIndex={0}
+        aria-label={`Knowledge block: ${block.title}`}
         className={cn(
-          'block-flipper relative h-48',
+          'block-flipper relative h-48 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl',
           isFlipped && 'flipped',
           isDragging && 'drag-preview'
         )}
         onDoubleClick={handleDoubleClick}
+        onClick={onSelect}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (e.target === e.currentTarget) {
+               onSelect?.();
+            }
+          }
+        }}
         whileHover={{ scale: isDragging ? 1 : 1.02 }}
         whileTap={{ scale: 0.98 }}
         initial={{ opacity: 0, y: 20 }}
