@@ -1,0 +1,3 @@
+## 2024-05-23 - Accessibility in Custom React Flow Nodes
+**Learning:** Custom ReactFlow nodes do not automatically inherit keyboard accessibility (tab navigation, Enter/Space selection). To support keyboard users, `role="button"`, `tabIndex={0}`, and `onKeyDown` handlers must be explicitly added to the node's interactive container, along with `focus-visible` styles for visual feedback.
+**Action:** Always wrap interactive custom nodes in a container with accessibility attributes and `onKeyDown` handlers that mirror `onClick` behavior, ensuring `preventDefault` is called to avoid scrolling or other side effects.
