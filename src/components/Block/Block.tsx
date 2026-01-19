@@ -12,10 +12,7 @@ import {
   Lock,
   Shield,
   Edit3,
-  Trash2,
-  Link2,
-  Tag as TagIcon,
-  ChevronRight
+  Trash2
 } from 'lucide-react';
 import { Block as BlockType, ImmutabilityLevel, BlockType as BType } from '@/types';
 import { cn } from '@/lib/utils';
@@ -157,10 +154,20 @@ export const Block: React.FC<BlockProps> = ({
     <div className="block-3d-container w-80" ref={blockRef}>
       <motion.div
         className={cn(
-          'block-flipper relative h-48',
+          'block-flipper relative h-48 focus-visible:outline-none group',
           isFlipped && 'flipped',
           isDragging && 'drag-preview'
         )}
+        role="button"
+        tabIndex={0}
+        aria-label={`Knowledge block: ${block.title}`}
+        onClick={onSelect}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onSelect?.();
+          }
+        }}
         onDoubleClick={handleDoubleClick}
         whileHover={{ scale: isDragging ? 1 : 1.02 }}
         whileTap={{ scale: 0.98 }}
@@ -171,7 +178,7 @@ export const Block: React.FC<BlockProps> = ({
         {/* Front Face */}
         <div
           className={cn(
-            'block-front glass-card h-full',
+            'block-front glass-card h-full group-focus-visible:ring-2 group-focus-visible:ring-primary',
             getTypeColor(),
             getImmutabilityClass(),
             isSelected && 'ring-2 ring-primary shadow-glow-md',
