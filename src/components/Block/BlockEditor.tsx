@@ -17,7 +17,7 @@ import {
   Code,
   TestTube,
   Database,
-  Notebook,
+  Book as Notebook,
 } from 'lucide-react';
 import { Block, BlockType, ImmutabilityLevel, BlockState } from '@/types';
 import { cn } from '@/lib/utils';
