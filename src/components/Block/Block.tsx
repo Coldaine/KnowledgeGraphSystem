@@ -156,11 +156,21 @@ export const Block: React.FC<BlockProps> = ({
   return (
     <div className="block-3d-container w-80" ref={blockRef}>
       <motion.div
+        role="button"
+        tabIndex={0}
+        aria-label={`Block: ${block.title}`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onSelect?.();
+          }
+        }}
         className={cn(
-          'block-flipper relative h-48',
+          'block-flipper relative h-48 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl',
           isFlipped && 'flipped',
           isDragging && 'drag-preview'
         )}
+        onClick={onSelect}
         onDoubleClick={handleDoubleClick}
         whileHover={{ scale: isDragging ? 1 : 1.02 }}
         whileTap={{ scale: 0.98 }}
