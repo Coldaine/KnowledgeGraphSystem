@@ -1,11 +1,13 @@
 /**
  * LLM-Powered Document Chunking
  *
- * Uses Gemini API to intelligently chunk documents into typed blocks
+ * Uses Gemini 3 Flash API to intelligently chunk documents into typed blocks
  * with semantic understanding and relationship extraction.
+ *
+ * Updated for Gemini 3 Flash (2026) with thinking level control.
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/genai';
 import {
   Block,
   BlockType,
@@ -17,6 +19,7 @@ import {
   SemanticRelation,
   BlockState,
   ImmutabilityLevel,
+  ThinkingLevel,
 } from '@/types';
 import { nanoid } from 'nanoid';
 
@@ -32,7 +35,7 @@ export class LLMChunker {
   constructor(apiKey: string) {
     this.genAI = new GoogleGenerativeAI(apiKey);
     this.model = this.genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash-latest',
+      model: 'gemini-3-flash',
     });
   }
 
@@ -50,11 +53,24 @@ export class LLMChunker {
       // Create system prompt for chunking
       const systemPrompt = this.createChunkingPrompt(config);
 
-      // Call Gemini for analysis
-      const result = await this.model.generateContent([
-        systemPrompt,
-        `Document to analyze:\\n\\n${content}`,
-      ]);
+      // Determine thinking level (default to LOW for document chunking - fast and cheap)
+      const thinkingLevel = config.thinkingLevel || ThinkingLevel.LOW;
+
+      // Call Gemini 3 Flash with thinking level control
+      const result = await this.model.generateContent({
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              { text: systemPrompt },
+              { text: `Document to analyze:\\n\\n${content}` },
+            ],
+          },
+        ],
+        generationConfig: {
+          thinkingLevel: thinkingLevel,
+        },
+      });
 
       const response = await result.response;
       const text = response.text();

@@ -357,6 +357,20 @@ export interface TraversalProfile {
 // ============================================================================
 
 /**
+ * Gemini 3 thinking levels for controlling reasoning depth
+ * - minimal: Fastest, cheapest (basic retrieval)
+ * - low: Fast with basic reasoning
+ * - medium: Balanced reasoning (default)
+ * - high: Deep planning for complex tasks
+ */
+export enum ThinkingLevel {
+  MINIMAL = 'minimal',
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+}
+
+/**
  * Configuration for LLM-powered ingestion
  */
 export interface IngestionConfig {
@@ -371,6 +385,9 @@ export interface IngestionConfig {
   extractTags: boolean;
   inferRelationships: boolean;
   generateSummary: boolean;
+
+  // LLM Settings
+  thinkingLevel?: ThinkingLevel; // Gemini 3 reasoning depth control
 
   // Review
   requireApproval: boolean;
