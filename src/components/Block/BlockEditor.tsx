@@ -17,7 +17,7 @@ import {
   Code,
   TestTube,
   Database,
-  Notebook,
+  Book as Notebook,
 } from 'lucide-react';
 import { Block, BlockType, ImmutabilityLevel, BlockState } from '@/types';
 import { cn } from '@/lib/utils';
@@ -35,7 +35,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
   onSave,
   onCancel,
 }) => {
-  const { tags: allTags, addTagToBlock, removeTagFromBlock } = useBlockStore();
+  const { tags: allTags } = useBlockStore();
   const [editedBlock, setEditedBlock] = useState<Block>({ ...block });
   const [newTag, setNewTag] = useState('');
 
@@ -135,6 +135,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
           <button
             onClick={onCancel}
             className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            aria-label="Close editor"
           >
             <X className="w-5 h-5 text-text-300" />
           </button>
@@ -210,6 +211,19 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
             className="w-full h-48 px-4 py-2 bg-graph-700 border border-white/10 rounded-lg text-text-100 placeholder-text-400 focus:outline-none focus:border-primary/50 font-mono text-sm resize-none"
             placeholder="Enter block content in Markdown format..."
           />
+          <div className="flex justify-between text-xs text-text-400 mt-1">
+            <span>Markdown supported</span>
+            <span>
+              {editedBlock.content.length} characters |{' '}
+              {
+                editedBlock.content
+                  .trim()
+                  .split(/\s+/)
+                  .filter((w) => w.length > 0).length
+              }{' '}
+              words
+            </span>
+          </div>
         </div>
 
         {/* Tags */}
@@ -240,6 +254,7 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
             <button
               onClick={handleAddTag}
               className="px-4 py-2 bg-primary/20 text-primary border border-primary/30 rounded-lg hover:bg-primary/30 transition-colors"
+              aria-label="Add tag"
             >
               <Tag className="w-4 h-4" />
             </button>
