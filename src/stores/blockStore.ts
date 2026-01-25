@@ -443,11 +443,11 @@ export const useBlockStore = create<BlockStore>()(
         serialize: (state) =>
           JSON.stringify({
             ...state,
-            blocks: Array.from(state.blocks.entries()),
-            edges: Array.from(state.edges.entries()),
-            tags: Array.from(state.tags.entries()),
-            visibleBlockIds: Array.from(state.visibleBlockIds),
-            visibleEdgeIds: Array.from(state.visibleEdgeIds),
+            blocks: Array.from(state.blocks?.entries() || []),
+            edges: Array.from(state.edges?.entries() || []),
+            tags: Array.from(state.tags?.entries() || []),
+            visibleBlockIds: Array.from(state.visibleBlockIds || []),
+            visibleEdgeIds: Array.from(state.visibleEdgeIds || []),
           }),
         deserialize: (str) => {
           const parsed = JSON.parse(str);
