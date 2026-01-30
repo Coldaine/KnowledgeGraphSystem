@@ -13,9 +13,6 @@ import {
   Shield,
   Edit3,
   Trash2,
-  Link2,
-  Tag as TagIcon,
-  ChevronRight
 } from 'lucide-react';
 import { Block as BlockType, ImmutabilityLevel, BlockType as BType } from '@/types';
 import { cn } from '@/lib/utils';
@@ -120,8 +117,17 @@ export const Block: React.FC<BlockProps> = ({
   if (viewMode === 'compact') {
     return (
       <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Knowledge block: ${block.title}`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onSelect?.();
+          }
+        }}
         className={cn(
-          'glass-card p-2 cursor-pointer',
+          'glass-card p-2 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none',
           getTypeColor(),
           isSelected && 'ring-2 ring-primary',
           className
@@ -156,8 +162,18 @@ export const Block: React.FC<BlockProps> = ({
   return (
     <div className="block-3d-container w-80" ref={blockRef}>
       <motion.div
+        role="button"
+        tabIndex={0}
+        aria-label={`Knowledge block: ${block.title}`}
+        onKeyDown={(e) => {
+          // Check if key is Enter or Space, but ensure we aren't inside an interactive child
+          if ((e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) {
+            e.preventDefault();
+            handleDoubleClick();
+          }
+        }}
         className={cn(
-          'block-flipper relative h-48',
+          'block-flipper relative h-48 rounded-xl focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none',
           isFlipped && 'flipped',
           isDragging && 'drag-preview'
         )}
