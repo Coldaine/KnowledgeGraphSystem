@@ -66,6 +66,21 @@ export const Block: React.FC<BlockProps> = ({
     onDoubleClick?.();
   }, [isFlipped, onDoubleClick]);
 
+  // Handle keyboard interaction
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    // Only trigger if the element itself is focused, not a child
+    if (e.target !== e.currentTarget) return;
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault(); // Prevent scrolling for Space
+      if (viewMode === 'compact') {
+        onSelect?.();
+      } else {
+        handleDoubleClick(); // Flip
+      }
+    }
+  }, [viewMode, onSelect, handleDoubleClick]);
+
   // Get block type color
   const getTypeColor = useCallback(() => {
     switch (block.type) {
@@ -121,12 +136,16 @@ export const Block: React.FC<BlockProps> = ({
     return (
       <div
         className={cn(
-          'glass-card p-2 cursor-pointer',
+          'glass-card p-2 cursor-pointer focus-visible:ring-2 focus-visible:outline-none',
           getTypeColor(),
           isSelected && 'ring-2 ring-primary',
           className
         )}
         onClick={onSelect}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="button"
+        aria-label={`Select block: ${block.title}`}
       >
         <div className="flex items-center gap-2">
           <ImmutabilityIcon />
@@ -157,11 +176,15 @@ export const Block: React.FC<BlockProps> = ({
     <div className="block-3d-container w-80" ref={blockRef}>
       <motion.div
         className={cn(
-          'block-flipper relative h-48',
+          'block-flipper relative h-48 focus-visible:ring-2 focus-visible:outline-none rounded-glass',
           isFlipped && 'flipped',
           isDragging && 'drag-preview'
         )}
         onDoubleClick={handleDoubleClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="button"
+        aria-label={`${block.title}. Double click or press Enter to flip for details.`}
         whileHover={{ scale: isDragging ? 1 : 1.02 }}
         whileTap={{ scale: 0.98 }}
         initial={{ opacity: 0, y: 20 }}
