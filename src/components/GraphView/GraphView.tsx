@@ -13,7 +13,6 @@ import ReactFlow, {
   Background,
   Controls,
   MiniMap,
-  Panel,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -138,8 +137,26 @@ export const GraphView: React.FC = () => {
   const convertBlocksToNodes = useCallback(() => {
     startMeasure('convertNodes');
 
+    const isVisible = (id: string) => {
+      // Robust check for different potential structures of visibleBlockIds
+      if (!visibleBlockIds) return true;
+      if (visibleBlockIds instanceof Set) {
+        return visibleBlockIds.size === 0 || visibleBlockIds.has(id);
+      }
+      if (Array.isArray(visibleBlockIds)) {
+        return (visibleBlockIds as string[]).length === 0 || (visibleBlockIds as string[]).includes(id);
+      }
+      // Handle case where Set might have been serialized to object
+      if (typeof visibleBlockIds === 'object') {
+         const v = visibleBlockIds as any;
+         if (typeof v.has === 'function') return v.size === 0 || v.has(id);
+         if (Array.isArray(v)) return v.length === 0 || v.includes(id);
+      }
+      return true;
+    };
+
     const flowNodes: Node[] = Array.from(blocks.values())
-      .filter((block) => visibleBlockIds.size === 0 || visibleBlockIds.has(block.id))
+      .filter((block) => isVisible(block.id))
       .map((block) => ({
         id: block.id,
         type: 'custom',
@@ -157,8 +174,25 @@ export const GraphView: React.FC = () => {
   const convertEdgesToFlowEdges = useCallback(() => {
     startMeasure('convertEdges');
 
+    const isVisible = (id: string) => {
+      if (!visibleEdgeIds) return true;
+      if (visibleEdgeIds instanceof Set) {
+        return visibleEdgeIds.size === 0 || visibleEdgeIds.has(id);
+      }
+      if (Array.isArray(visibleEdgeIds)) {
+        return (visibleEdgeIds as string[]).length === 0 || (visibleEdgeIds as string[]).includes(id);
+      }
+       // Handle case where Set might have been serialized to object
+      if (typeof visibleEdgeIds === 'object') {
+         const v = visibleEdgeIds as any;
+         if (typeof v.has === 'function') return v.size === 0 || v.has(id);
+         if (Array.isArray(v)) return v.length === 0 || v.includes(id);
+      }
+      return true;
+    };
+
     const flowEdges: FlowEdge[] = Array.from(edges.values())
-      .filter((edge) => visibleEdgeIds.size === 0 || visibleEdgeIds.has(edge.id))
+      .filter((edge) => isVisible(edge.id))
       .map((edge) => ({
         id: edge.id,
         source: edge.fromBlockId,
@@ -326,18 +360,18 @@ export const GraphView: React.FC = () => {
           />
 
           {/* Custom Controls Panel */}
-          <Panel position="top-left" className="space-y-2">
+          <div className="absolute top-4 left-4 z-10 space-y-2">
             <GraphControls />
-          </Panel>
+          </div>
 
           {/* Performance Monitor */}
-          <Panel position="bottom-right" className="glass-panel p-2">
+          <div className="absolute bottom-4 right-4 z-10 glass-panel p-2">
             <div className="text-xs text-text-300">
               <div>FPS: {fps.toFixed(0)}</div>
               <div>Nodes: {nodes.length}</div>
               <div>Edges: {flowEdges.length}</div>
             </div>
-          </Panel>
+          </div>
         </ReactFlow>
       </ReactFlowProvider>
     </div>
