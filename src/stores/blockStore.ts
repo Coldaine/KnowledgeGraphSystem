@@ -8,6 +8,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { enableMapSet } from 'immer';
 import {
   Block,
   Edge,
@@ -24,6 +25,9 @@ import {
   TagGroup,
 } from '@/types';
 import { nanoid } from 'nanoid';
+
+// Enable Map/Set support in Immer
+enableMapSet();
 
 interface BlockStore {
   // Data
@@ -439,26 +443,39 @@ export const useBlockStore = create<BlockStore>()(
       })),
       {
         name: 'knowledge-graph-storage',
-        // Custom serialization for Maps
-        serialize: (state: any) =>
-          JSON.stringify({
-            ...state,
-            blocks: Array.from(state.blocks.entries()),
-            edges: Array.from(state.edges.entries()),
-            tags: Array.from(state.tags.entries()),
-            visibleBlockIds: Array.from(state.visibleBlockIds),
-            visibleEdgeIds: Array.from(state.visibleEdgeIds),
-          }),
-        deserialize: (str) => {
-          const parsed = JSON.parse(str);
-          return {
-            ...parsed,
-            blocks: new Map(parsed.blocks || []),
-            edges: new Map(parsed.edges || []),
-            tags: new Map(parsed.tags || []),
-            visibleBlockIds: new Set(parsed.visibleBlockIds || []),
-            visibleEdgeIds: new Set(parsed.visibleEdgeIds || []),
-          };
+        // Use new storage API instead of deprecated serialize/deserialize
+        storage: {
+          getItem: (name) => {
+            const str = localStorage.getItem(name);
+            if (!str) return null;
+            const parsed = JSON.parse(str);
+            return {
+              state: {
+                ...parsed.state,
+                blocks: new Map(parsed.state.blocks || []),
+                edges: new Map(parsed.state.edges || []),
+                tags: new Map(parsed.state.tags || []),
+                visibleBlockIds: new Set(parsed.state.visibleBlockIds || []),
+                visibleEdgeIds: new Set(parsed.state.visibleEdgeIds || []),
+              },
+              version: parsed.version,
+            };
+          },
+          setItem: (name, value) => {
+            const serialized = JSON.stringify({
+              state: {
+                ...value.state,
+                blocks: Array.from(value.state.blocks.entries()),
+                edges: Array.from(value.state.edges.entries()),
+                tags: Array.from(value.state.tags.entries()),
+                visibleBlockIds: Array.from(value.state.visibleBlockIds),
+                visibleEdgeIds: Array.from(value.state.visibleEdgeIds),
+              },
+              version: value.version,
+            });
+            localStorage.setItem(name, serialized);
+          },
+          removeItem: (name) => localStorage.removeItem(name),
         },
       }
     )
