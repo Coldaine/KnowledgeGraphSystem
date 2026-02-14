@@ -1,14 +1,15 @@
 import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
-import { Inter } from 'next/font/google';
+// Note: Google Fonts disabled due to network restrictions
+// import { Inter } from 'next/font/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
+// const inter = Inter({
+//   subsets: ['latin'],
+//   variable: '--font-inter',
+// });
 
 export default function App({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(
@@ -25,7 +26,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className={`${inter.variable} font-sans`}>
+      <div className="font-sans">
         <Component {...pageProps} />
       </div>
       <ReactQueryDevtools initialIsOpen={false} />

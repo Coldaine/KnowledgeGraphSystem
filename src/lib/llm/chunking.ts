@@ -7,7 +7,7 @@
  * Updated for Gemini 3 Flash (2026) with thinking level control.
  */
 
-import { GoogleGenerativeAI } from '@google/genai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import {
   Block,
   BlockType,
@@ -84,9 +84,10 @@ export class LLMChunker {
       };
     } catch (error) {
       console.error('Chunking error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
         plan: this.createFallbackPlan(source, config),
-        errors: [`LLM chunking failed: ${error.message}`],
+        errors: [`LLM chunking failed: ${errorMessage}`],
       };
     }
   }

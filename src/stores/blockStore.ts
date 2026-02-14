@@ -440,7 +440,7 @@ export const useBlockStore = create<BlockStore>()(
       {
         name: 'knowledge-graph-storage',
         // Custom serialization for Maps
-        serialize: (state) =>
+        serialize: (state: any) =>
           JSON.stringify({
             ...state,
             blocks: Array.from(state.blocks.entries()),

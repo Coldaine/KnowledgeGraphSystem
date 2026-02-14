@@ -38,24 +38,23 @@ export default function Home() {
       if (e.key === '?') {
         setShowHelp(!showHelp);
       }
-      if (e.key === 'g' && !e.ctrlKey && !e.metaKey) {
-        const next = e.key;
-        setTimeout(() => {
-          switch (next) {
-            case 'g':
-              setViewMode('graph');
-              break;
-            case 'd':
-              setViewMode('document');
-              break;
-            case 'b':
-              setViewMode('brainstorm');
-              break;
-            case 'f':
-              setViewMode('folder');
-              break;
-          }
-        }, 100);
+      // Note: Multi-key shortcuts (gg, gd, etc.) would require state tracking
+      // For now, using simple single-key shortcuts
+      if (!e.ctrlKey && !e.metaKey && !e.shiftKey) {
+        switch (e.key) {
+          case '1':
+            setViewMode('graph');
+            break;
+          case '2':
+            setViewMode('document');
+            break;
+          case '3':
+            setViewMode('brainstorm');
+            break;
+          case '4':
+            setViewMode('folder');
+            break;
+        }
       }
       if (e.key === 'h' && e.ctrlKey) {
         setShowHUD(!showHUD);
