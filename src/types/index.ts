@@ -430,3 +430,392 @@ export type BlockMap = Map<BlockId, Block>;
 export type EdgeMap = Map<EdgeId, Edge>;
 export type TemplateMap = Map<TemplateId, Template>;
 export type TagMap = Map<TagId, Tag>;
+
+// ============================================================================
+// Knowledge Decay Types
+// Cross-Reference: docs/knowledge-decay-strategy.md
+// WHY: Knowledge freshness is as important as knowledge governance.
+// Without decay tracking, outdated information persists as if it were current.
+// ============================================================================
+
+/**
+ * Decay category determines review frequency
+ *
+ * Based on research showing ~30% drift in 6 months:
+ * - FAST: volatile, needs frequent re-verification (30 days)
+ * - MEDIUM: moderate stability (180 days)
+ * - SLOW: stable but not eternal (730 days)
+ * - NONE: truly eternal (constitutional, mathematical, etc.)
+ *
+ * See: docs/knowledge-decay-strategy.md
+ */
+export enum DecayCategory {
+  FAST = 'fast',       // 30-day review cycle
+  MEDIUM = 'medium',   // 180-day review cycle
+  SLOW = 'slow',       // 730-day review cycle
+  NONE = 'none',       // Never decays
+}
+
+/**
+ * Block decay metadata for knowledge freshness tracking
+ *
+ * WHY: Blocks need to be periodically re-verified to ensure accuracy.
+ * This interface tracks when verification occurred and provides a
+ * confidence score that decays over time.
+ */
+export interface BlockDecay {
+  decayCategory: DecayCategory;
+  ttlDays?: number;                        // Override for custom TTL
+  lastVerifiedAt?: Date;                   // Last verification timestamp
+  verifiedBy?: string;                     // Who/what verified it
+  verifiedByAuthority?: AuthorityLevel;    // Authority level of verifier
+  isAutoVerifiable: boolean;               // Can be auto-verified via API
+  confidenceScore: number;                 // Decays: 0.99^weeks_since_verify
+}
+
+// ============================================================================
+// Agent Tier Types (Agent Senate Model)
+// Cross-Reference: docs/contracts/C004-agent-hierarchy.md
+// WHY: Flat agent classification doesn't capture nuanced capabilities.
+// The 3-tier Senate model (Drone/Architect/Judge) maps to specific clearances.
+// ============================================================================
+
+/**
+ * Agent tier in the Senate model
+ *
+ * Each tier has specific capabilities and clearance:
+ * - DRONE (Tier 1): Read-only, high-volume tasks, clearance 0
+ * - ARCHITECT (Tier 2): Create/modify mutable content, clearance 1
+ * - JUDGE (Tier 3): Review changes to protected content, clearance 3
+ *
+ * See: docs/contracts/C004-agent-hierarchy.md
+ */
+export enum AgentTier {
+  DRONE = 1,      // Read-only, high-volume tasks
+  ARCHITECT = 2,  // Create/modify mutable content
+  JUDGE = 3,      // Review changes to protected content
+}
+
+/**
+ * Agent identity with tier and clearance
+ *
+ * WHY: Agents need identity tracking separate from human principals.
+ * The clearance is derived from tier (Drone=0, Architect=1, Judge=3)
+ * but stored explicitly for fast permission checks.
+ */
+export interface AgentIdentity {
+  id: string;
+  tier: AgentTier;
+  clearance: number;  // Derived: Drone=0, Architect=1, Judge=3
+  model?: string;     // e.g., 'gemini-flash', 'claude-sonnet'
+}
+
+// ============================================================================
+// Authority Chain Types
+// Cross-Reference: docs/contracts/C002-authority-chain.md
+// WHY: Immutability without authority levels is binary. With authority levels,
+// we can express "immutable to junior agents but modifiable by senior architects."
+// ============================================================================
+
+/**
+ * Authority levels in the system hierarchy
+ *
+ * The hierarchy enables graduated access control:
+ * - SYSTEM: Reserved for system-defined constraints that even principals cannot override
+ * - PRINCIPAL: Strategic decisions, architectural principles, legal requirements
+ * - SENIOR: Reviewed and approved content, design decisions
+ * - CONTRIBUTOR: Standard content creation and editing
+ * - AGENT: AI agents operating autonomously
+ * - VIEWER: Read-only access, no modification rights
+ *
+ * See: docs/contracts/C002-authority-chain.md
+ */
+export enum AuthorityLevel {
+  SYSTEM = 'system',
+  PRINCIPAL = 'principal',
+  SENIOR = 'senior',
+  CONTRIBUTOR = 'contributor',
+  AGENT = 'agent',
+  VIEWER = 'viewer',
+}
+
+/**
+ * Extended authority tracking for blocks
+ *
+ * WHY: The base ImmutabilityLevel tells us IF content is protected.
+ * BlockAuthority tells us WHO protected it, WHEN, WHY, and WHO can change it.
+ */
+export interface BlockAuthority {
+  immutability: ImmutabilityLevel;
+  authorityLevel: AuthorityLevel;      // Required authority to modify
+  markedBy: string;                     // Who set the immutability
+  markedAt: Date;                       // When immutability was set
+  justification?: string;               // Why this is immutable (required for IMMUTABLE level)
+}
+
+// ============================================================================
+// Agent Escalation Types
+// Cross-Reference: docs/contracts/C002-authority-chain.md Section 5
+// WHY: Agents will encounter situations where their tasking conflicts with
+// immutable requirements. The escalation protocol provides structured handling.
+// ============================================================================
+
+/**
+ * Error classification for escalation rubric
+ *
+ * Applied in order during escalation review:
+ * 1. execution - Agent misunderstood or misapplied the task
+ * 2. tooling - Wrong tool/method selected for the task
+ * 3. design - Implementation approach is flawed
+ * 4. constraint - Requirements are valid but overly restrictive
+ * 5. requirement - Core requirements are fundamentally wrong
+ *
+ * See: docs/contracts/C002-authority-chain.md - Formal Evaluation Rubric
+ */
+export type EscalationErrorType =
+  | 'execution'
+  | 'tooling'
+  | 'design'
+  | 'constraint'
+  | 'requirement';
+
+/**
+ * Escalation event status lifecycle
+ */
+export type EscalationStatus =
+  | 'pending'           // Awaiting review
+  | 'reviewed'          // Reviewed by higher-level agent
+  | 'resolved'          // Resolution applied
+  | 'escalated_to_human'; // Requires human intervention
+
+/**
+ * Escalation event when an agent encounters immutable constraint conflict
+ *
+ * WHY: Silent failures hide problems; complete halts block progress.
+ * Escalation events provide a structured middle path that surfaces conflicts
+ * while allowing work to continue where possible.
+ *
+ * See: docs/contracts/C002-authority-chain.md Section 5
+ */
+export interface EscalationEvent {
+  id: string;
+  timestamp: Date;
+
+  // Context - what was the agent trying to do?
+  agentId: string;
+  agentTier: AgentTier;  // Using AgentTier per upstream Senate model
+  taskDescription: string;
+  conflictingBlockId: BlockId;
+
+  // Conflict details - what went wrong?
+  expectedBehavior: string;
+  actualConstraint: string;
+  proposedResolution?: string;
+
+  // Evaluation - how was it classified? (filled during review)
+  errorType?: EscalationErrorType;
+  evaluatedBy?: string;
+  evaluatedAt?: Date;
+  evaluationNotes?: string;
+
+  // Resolution - what was decided?
+  status: EscalationStatus;
+  resolution?: string;
+  resultingChanges?: BlockId[];  // Blocks modified as a result
+}
+
+// ============================================================================
+// Motion to Change Types (formerly Agentic Review)
+// Cross-Reference: docs/contracts/C004-agent-hierarchy.md
+// WHY: When an agent proposes changing immutable content, a multi-perspective
+// review catches blind spots. The Prosecutor/Defense/Judge structure ensures
+// balanced adversarial evaluation per the Agent Senate model.
+// ============================================================================
+
+/**
+ * Recommendation from motion review
+ */
+export type ReviewRecommendation = 'approve' | 'reject' | 'escalate_to_human';
+
+/**
+ * Motion to Change review session for immutable content modifications
+ *
+ * WHY: Immutable content must sometimes change, but those changes must be
+ * deliberate, reviewed, and audited. The adversarial Prosecutor/Defense/Judge
+ * model ensures all perspectives are considered.
+ *
+ * See: docs/contracts/C004-agent-hierarchy.md - Motion to Change Protocol
+ */
+export interface MotionToChange {
+  id: string;
+  triggeredBy: string;  // Agent or user who proposed the change
+  triggeredAt: Date;
+
+  // What's being changed?
+  proposedChange: {
+    blockId: BlockId;
+    currentContent: string;
+    proposedContent: string;
+    justification: string;
+  };
+
+  // Review perspectives - adversarial review per Agent Senate model
+  prosecutorArguments: string[];   // Arguments FOR the change (renamed from advocate)
+  defenseArguments: string[];      // Arguments AGAINST the change (renamed from critic)
+  judgeVerdict: string;            // Balanced evaluation (renamed from neutralAssessment)
+
+  // Outcome
+  recommendation: ReviewRecommendation;
+  confidence: number;            // 0-1 confidence in recommendation
+  riskAssessment?: string;       // What could go wrong if approved
+
+  // Audit
+  reviewedAt: Date;
+  transcript: string;            // Full review conversation
+
+  // Final decision (may differ from recommendation if human overrides)
+  finalDecision?: ReviewRecommendation;
+  decidedBy?: string;
+  decidedAt?: Date;
+}
+
+// ============================================================================
+// Conflict Detection Types
+// Cross-Reference: docs/contracts/C005-audit-trail.md Section 5
+// WHY: Proactive detection catches problems before they compound.
+// Our taxonomy is richer than upstream's contradiction-only model.
+// ============================================================================
+
+/**
+ * Types of detected inconsistencies
+ *
+ * Extended beyond upstream's 'contradiction' to cover more failure modes:
+ * - contradiction: Blocks with conflicting statements
+ * - redundancy: Semantically similar blocks that should merge
+ * - orphan: Blocks with no relationships
+ * - stale: Blocks not updated within staleness threshold (links to decay model)
+ */
+export type ConflictType =
+  | 'contradiction'  // Blocks with conflicting statements
+  | 'redundancy'     // Semantically similar blocks that should merge
+  | 'orphan'         // Blocks with no relationships
+  | 'stale';         // Blocks not updated within staleness threshold
+
+/**
+ * Criticality levels for detected conflicts
+ */
+export type ConflictCriticality = 'critical' | 'high' | 'medium' | 'low';
+
+/**
+ * Conflict resolution status
+ */
+export type ConflictStatus =
+  | 'unresolved'
+  | 'in_review'
+  | 'resolved'
+  | 'dismissed';  // Determined to be false positive
+
+/**
+ * Detected inconsistency in the knowledge base
+ *
+ * WHY: Growing knowledge bases accumulate inconsistencies. This type enables
+ * the system to track, prioritize, and resolve conflicts systematically.
+ *
+ * See: docs/contracts/C005-audit-trail.md Section 5
+ */
+export interface ConflictRecord {
+  id: string;
+  type: ConflictType;
+
+  // Involved blocks
+  blockIds: BlockId[];
+  relationshipContext?: EdgeId[];  // Relationships that reveal the conflict
+
+  // Detection
+  detectedAt: Date;
+  detectedBy: 'automated_review' | 'agent' | 'human';
+  detectionReason: string;         // Why this was flagged
+
+  // Classification
+  criticality: ConflictCriticality;
+
+  // Resolution
+  status: ConflictStatus;
+  resolvedBy?: string;
+  resolvedAt?: Date;
+  resolution?: string;
+
+  // If dismissed, why?
+  dismissalReason?: string;
+}
+
+// ============================================================================
+// Enhanced Audit Types
+// Cross-Reference: docs/contracts/C005-audit-trail.md
+// WHY: Knowledge systems operated by AI agents require comprehensive logging.
+// ============================================================================
+
+/**
+ * Extended action types for comprehensive audit trail
+ *
+ * Covers all state-changing operations per C005 requirements.
+ */
+export type AuditActionType =
+  // Block operations
+  | 'block.create'
+  | 'block.update'
+  | 'block.delete'
+  | 'block.restore'
+  // Immutability operations
+  | 'immutability.set'
+  | 'immutability.elevate'    // Mutable → Locked → Immutable
+  | 'immutability.demote'     // Reverse direction (requires higher authority)
+  // Authority operations
+  | 'authority.grant'
+  | 'authority.revoke'
+  // Agent operations
+  | 'agent.escalate'
+  | 'agent.motion.start'      // Renamed from review.start
+  | 'agent.motion.complete'   // Renamed from review.complete
+  // Conflict operations
+  | 'conflict.detect'
+  | 'conflict.resolve'
+  | 'conflict.dismiss';
+
+/**
+ * Enhanced audit entry with full context
+ *
+ * See: docs/contracts/C005-audit-trail.md Section 3
+ */
+export interface AuditEntry {
+  id: string;
+  action: AuditActionType;
+  timestamp: Date;
+
+  // Who
+  actorId: string;
+  actorType: 'human' | 'agent' | 'system';
+  actorAuthorityLevel: AuthorityLevel;
+
+  // What
+  targetType: 'block' | 'edge' | 'tag' | 'escalation' | 'conflict' | 'motion';
+  targetId: string;
+
+  // Context
+  previousState?: any;
+  newState?: any;
+  justification?: string;
+
+  // Session tracking
+  sessionId: string;
+  correlationId?: string;  // Groups related actions
+}
+
+// ============================================================================
+// Governance Convenience Types
+// ============================================================================
+
+export type EscalationEventMap = Map<string, EscalationEvent>;
+export type ConflictRecordMap = Map<string, ConflictRecord>;
+export type MotionToChangeMap = Map<string, MotionToChange>;
+export type AuditEntryList = AuditEntry[];
