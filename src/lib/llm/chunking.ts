@@ -1,13 +1,13 @@
 /**
  * LLM-Powered Document Chunking
  *
- * Uses Gemini 3 Flash API to intelligently chunk documents into typed blocks
+ * Uses Gemini 3 Flash Preview API to intelligently chunk documents into typed blocks
  * with semantic understanding and relationship extraction.
  *
- * Updated for Gemini 3 Flash (2026) with thinking level control.
+ * Updated for Gemini 3 Flash Preview (2026) with thinking level control.
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import {
   Block,
   BlockType,
@@ -29,14 +29,10 @@ export interface ChunkingResult {
 }
 
 export class LLMChunker {
-  private genAI: GoogleGenerativeAI;
-  private model: any;
+  private ai: GoogleGenAI;
 
   constructor(apiKey: string) {
-    this.genAI = new GoogleGenerativeAI(apiKey);
-    this.model = this.genAI.getGenerativeModel({
-      model: 'gemini-3-flash',
-    });
+    this.ai = new GoogleGenAI({ apiKey });
   }
 
   /**
@@ -53,27 +49,29 @@ export class LLMChunker {
       // Create system prompt for chunking
       const systemPrompt = this.createChunkingPrompt(config);
 
-      // Determine thinking level (default to LOW for document chunking - fast and cheap)
-      const thinkingLevel = config.thinkingLevel || ThinkingLevel.LOW;
+      // Map ThinkingLevel enum to API string values (uppercase for API)
+      const thinkingLevelMap: Record<ThinkingLevel, 'MINIMAL' | 'LOW' | 'MEDIUM' | 'HIGH'> = {
+        [ThinkingLevel.MINIMAL]: 'MINIMAL',
+        [ThinkingLevel.LOW]: 'LOW',
+        [ThinkingLevel.MEDIUM]: 'MEDIUM',
+        [ThinkingLevel.HIGH]: 'HIGH',
+      };
 
-      // Call Gemini 3 Flash with thinking level control
-      const result = await this.model.generateContent({
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              { text: systemPrompt },
-              { text: `Document to analyze:\\n\\n${content}` },
-            ],
+      // Determine thinking level (default to LOW for document chunking - fast and cheap)
+      const thinkingLevel = thinkingLevelMap[config.thinkingLevel || ThinkingLevel.LOW];
+
+      // Call Gemini 3 Flash Preview with thinking level control
+      const response = await this.ai.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: `${systemPrompt}\n\nDocument to analyze:\n\n${content}`,
+        config: {
+          thinkingConfig: {
+            thinkingLevel: thinkingLevel as any, // API expects enum type
           },
-        ],
-        generationConfig: {
-          thinkingLevel: thinkingLevel,
         },
       });
 
-      const response = await result.response;
-      const text = response.text();
+      const text = response.text || '';
 
       // Parse LLM response
       const plan = this.parseChunkingResponse(text, content, config);
