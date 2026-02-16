@@ -3,25 +3,81 @@
 ## Overview
 This roadmap outlines the planned development phases for the Knowledge Graph System, from MVP to a fully-featured knowledge management platform.
 
-## Current Status: Phase 1 MVP ✅ (Completed)
+## Current Status: Phase 0.3 - Buildable Prototype ⚠️
 
-### Completed Features
-- ✅ Core block system with TypeScript interfaces
-- ✅ Graph visualization with React Flow
-- ✅ Document compositor for block assembly
-- ✅ LLM-powered document chunking (Gemini API)
-- ✅ User-composed dashboard system
-- ✅ Three-tier immutability levels
-- ✅ Tag system with inheritance
-- ✅ localStorage persistence
-- ✅ Export/import functionality
-- ✅ Double-click flip animation
-- ✅ Physics-based node interactions
-- ✅ Glassmorphism dark theme
+**Reality Check:** This roadmap was written aspirationally. Actual implementation is ~30% complete.
+
+### Actually Completed ✅
+- ✅ Core block system with TypeScript interfaces (tested - 16 tests)
+- ✅ Graph visualization with React Flow (working)
+- ✅ Three-tier immutability levels (implemented)
+- ✅ Tag system with groups (tested - 3 tests)
+- ✅ localStorage persistence (working)
+- ✅ Glassmorphism dark theme (complete)
+- ✅ Basic graph physics (working)
+
+### Implemented but Untested ⚠️
+- ⚠️ Document compositor for block assembly (coded, needs integration tests)
+- ⚠️ LLM-powered document chunking (migrated to Gemini 3 Flash, never tested with real API)
+
+### Partially Implemented 🔶
+- 🔶 Export/import functionality (basic implementation exists)
+- 🔶 Double-click flip animation (UI exists, may have bugs)
+
+### Not Implemented ❌
+- ❌ User-composed dashboard system (concept only)
+- ❌ Tag inheritance logic (not coded)
+- ❌ Advanced physics interactions (basic only)
+
+**For detailed gap analysis, see [GAP_ANALYSIS.md](../GAP_ANALYSIS.md)**
 
 ---
 
-## Phase 2: Enhanced Features (Q1 2025)
+## Phase 1: Validate & Stabilize Prototype (Current Priority - 1-2 weeks)
+
+**Goal:** Verify that what we built actually works and fix critical gaps.
+
+### 1.1 Testing & Verification
+- [ ] **Test LLM Integration**
+  - Get Gemini API key
+  - Test document chunking with real documents
+  - Verify thinking level controls work
+  - Fix any API integration bugs
+- [ ] **Integration Testing**
+  - Test document assembly end-to-end
+  - Verify graph visualization with large datasets
+  - Test export/import functionality
+  - Manual testing of all UI features
+- [ ] **Increase Test Coverage**
+  - Add compositor tests (0% → 80%)
+  - Add hook tests (0% → 60%)
+  - Add component tests (5% → 40%)
+  - Target: 15% → 50% overall coverage
+
+### 1.2 Bug Fixes & Polish
+- [ ] **UI Bugs**
+  - Fix keyboard shortcut tooltips (show 1-4, not gg/gd)
+  - Test double-click flip animation
+  - Verify tag system works correctly
+  - Test block editor edge cases
+- [ ] **Performance**
+  - Test graph with 1000+ nodes
+  - Verify edge culling works
+  - Test localStorage limits
+  - Profile rendering performance
+
+### 1.3 Documentation Accuracy
+- [x] Create GAP_ANALYSIS.md
+- [x] Update README with realistic status
+- [x] Update ROADMAP with actual progress
+- [ ] Add "Current Status" badges to all specs
+- [ ] Create user guide based on what actually works
+
+**Estimated Timeline:** 1-2 weeks
+
+---
+
+## Phase 2: Enhanced Features (Deferred - Re-evaluate after Phase 1)
 
 ### 2.1 Advanced Graph Capabilities
 - [ ] **Graph Algorithms**
@@ -90,11 +146,11 @@ This roadmap outlines the planned development phases for the Knowledge Graph Sys
 - Index `:Function(name)`, `:CALLS`; multi-hop <800ms @10k nodes.
 - Incremental: keystroke parse → delta upsert.
 
-**Estimated Timeline:** 8-10 weeks
+**Estimated Timeline:** 8-10 weeks (only start after Phase 1 complete)
 
 ---
 
-## Phase 3: Backend & Persistence (Q2 2025)
+## Phase 3: Backend & Persistence (TBD - depends on Phase 1-2 completion)
 
 ### 3.1 Neo4j Integration
 - [ ] **Graph Database**
@@ -136,7 +192,7 @@ This roadmap outlines the planned development phases for the Knowledge Graph Sys
 
 ---
 
-## Phase 4: AI Enhancement (Q3 2025)
+## Phase 4: AI Enhancement (TBD)
 
 ### 4.1 Advanced LLM Integration
 - [ ] **Multi-Model Support**
@@ -198,7 +254,7 @@ This roadmap outlines the planned development phases for the Knowledge Graph Sys
 
 ---
 
-## Phase 5: Enterprise Features (Q4 2025)
+## Phase 5: Enterprise Features (TBD - Long-term goal)
 
 ### 5.1 Scalability & Performance
 - [ ] **Optimization**
@@ -346,14 +402,15 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## Version History
 
-| Version | Date | Milestone |
-|---------|------|-----------|
-| v0.1.0 | Jan 2025 | MVP Release |
-| v0.2.0 | Q1 2025 | Enhanced Features |
-| v0.3.0 | Q2 2025 | Backend Integration |
-| v1.0.0 | Q3 2025 | Production Ready |
-| v2.0.0 | Q4 2025 | Enterprise Edition |
-| v3.0.0 | 2026 | Mobile & Offline |
+| Version | Date | Milestone | Status |
+|---------|------|-----------|--------|
+| v0.1.0-alpha | Feb 2026 | Buildable Prototype | ✅ Current |
+| v0.2.0 | TBD | Validated MVP | 🎯 Phase 1 Goal |
+| v0.3.0 | TBD | Enhanced Features | 📋 Planned |
+| v0.5.0 | TBD | Backend Integration | 📋 Planned |
+| v1.0.0 | TBD | Production Ready | 🎯 Long-term Goal |
+
+**Note:** Original timeline estimates (Q1-Q4 2025) were aspirational. Actual development is iterative without fixed dates.
 
 ---
 

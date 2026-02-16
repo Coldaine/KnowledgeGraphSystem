@@ -2,11 +2,34 @@
 
 A sophisticated block-based knowledge management system with graph visualization, intelligent document assembly, and LLM-powered content processing.
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Version](https://img.shields.io/badge/version-0.1.0--alpha-blue)
+![Build](https://img.shields.io/badge/build-passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-25%20passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-15%25-yellow)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
-![Next.js](https://img.shields.io/badge/Next.js-14.0-black)
+![Next.js](https://img.shields.io/badge/Next.js-14.2-black)
 ![React](https://img.shields.io/badge/React-18.2-61dafb)
+
+---
+
+## ⚠️ Project Status
+
+**Current State:** Buildable Prototype (~30% of vision implemented)
+
+| Aspect | Status | Details |
+|--------|--------|---------|
+| **Build** | ✅ Passing | `npm run build` succeeds, dev server starts |
+| **Tests** | ✅ 25 passing | Core state management tested, ~15% coverage |
+| **UI** | ✅ Functional | Graph view, block editor, visualization working |
+| **LLM Integration** | ⚠️ Untested | Code exists but never tested with real API key |
+| **Backend** | ❌ Not Built | No database, no API server, localStorage only |
+| **Production Ready** | ❌ No | Prototype for development and testing |
+
+**📊 For detailed status assessment, see:**
+- [GAP_ANALYSIS.md](./GAP_ANALYSIS.md) - Comprehensive gap between specs and implementation
+- [HONEST_STATUS.md](./HONEST_STATUS.md) - Brutally honest assessment of what works
+- [REMEDIATION_SUMMARY.md](./REMEDIATION_SUMMARY.md) - Recent fixes and improvements
 
 ---
 
@@ -38,20 +61,32 @@ Every feature traces back to a Contract. Every Contract traces back to a Constit
 
 ## Features
 
-### Core Capabilities
-- **Block-Based Architecture**: Everything is a "Block" - the atomic unit of knowledge
-- **Dual Relationship Model**: Structural relationships for document assembly + Semantic relationships for knowledge graphs
-- **Dynamic Document Assembly**: Compositor that traverses blocks to generate documents
-- **LLM-Powered Chunking**: Intelligent document ingestion using Gemini API
-- **Graph Visualization**: React Flow-based interactive graph with physics simulation
-- **User-Composed Dashboards**: Build custom workspaces from widgets and filters
-- **Three-Tier Immutability**: Mutable, Locked, and Immutable protection levels
+### ✅ Implemented & Working
 
-### Key Interactions
-- **Double-Click Flip**: Blocks flip to reveal metadata on the back
-- **Smart Edge Rendering**: Performance-optimized edge display (structural by default, semantic on demand)
-- **Tag Inheritance**: Organizational tags cascade down, technical tags don't
+- **Block-Based Architecture**: Everything is a "Block" - the atomic unit of knowledge (16 tests)
+- **Dual Relationship Model**: Structural + Semantic relationships (3 tests)
+- **Graph Visualization**: React Flow-based interactive graph with physics simulation
+- **Three-Tier Immutability**: Mutable, Locked, and Immutable protection levels
+- **Tag System**: Organizational tagging with groups (3 tests)
+- **State Management**: Zustand with localStorage persistence
 - **Glassmorphism UI**: Modern dark theme with blur effects and depth
+- **Document View**: Basic document assembly from blocks
+- **Block Editor**: Rich text editing with Tiptap
+
+### ⚠️ Implemented but Untested
+
+- **LLM-Powered Chunking**: Intelligent document ingestion using Gemini 3 Flash API (never tested with real key)
+- **Dynamic Document Assembly**: Compositor that traverses blocks (exists, needs integration testing)
+- **Smart Edge Rendering**: Performance-optimized edge display (basic implementation)
+
+### ❌ Specified but Not Built
+
+- **User-Composed Dashboards**: Custom workspaces from widgets and filters
+- **Backend Database**: Neo4j/PostgreSQL integration
+- **Multi-user Support**: Authentication and collaboration
+- **Real-time Sync**: WebSocket-based updates
+- **Agent Orchestration**: AI-powered automation (skeleton only)
+- **Knowledge Decay**: Tracking and verification (not implemented)
 
 ## 🚀 Quick Start
 
@@ -112,14 +147,20 @@ Tag {
 ```
 
 ### Technology Stack
-- **Frontend**: Next.js, React, TypeScript
+
+**Implemented:**
+- **Frontend**: Next.js 14.2, React 18.2, TypeScript 5.3
 - **Styling**: Tailwind CSS with glassmorphism design system
-- **State Management**: Zustand with persistence
-- **Graph Visualization**: React Flow
-- **Animation**: Framer Motion
-- **LLM Integration**: Gemini API for document chunking
+- **State Management**: Zustand with Immer middleware and localStorage persistence
+- **Graph Visualization**: React Flow v10.3 (react-flow-renderer)
+- **LLM Integration**: Google Generative AI SDK (@google/genai v1.41) - Gemini 3 Flash Preview
 - **Editor**: Tiptap for rich text editing
-- **Data Persistence**: localStorage (MVP), Neo4j (planned)
+- **Testing**: Jest + React Testing Library (25 tests, 15% coverage)
+
+**Not Yet Implemented:**
+- **Animation**: Framer Motion (partially used)
+- **Database**: Neo4j/PostgreSQL (localStorage only for now)
+- **Backend**: No API server yet
 
 ## 📊 Views & Modes
 
@@ -158,17 +199,33 @@ const result = await compositor.assemble(config);
 
 ## 🤖 LLM Integration
 
-### Phase 1 (Current)
+### Current Status: Code Exists, Untested ⚠️
+
+The system uses **Gemini 3 Flash Preview** API with thinking level controls (MINIMAL/LOW/MEDIUM/HIGH):
+
+```typescript
+// src/lib/llm/chunking.ts - Implemented but never tested
+const response = await ai.models.generateContent({
+  model: 'gemini-3-flash-preview',
+  contents: prompt,
+  config: {
+    thinkingConfig: { thinkingLevel: 'LOW' }
+  }
+});
+```
+
+**Implemented (but untested):**
 - Intelligent document chunking
 - Block type inference
+
+**Not Yet Implemented:**
 - Relationship extraction
 - Tag suggestions
-
-### Phase 2 (Planned)
-- 75% of interactions via LLM
 - Natural language queries
 - Automated organization
 - Conflict detection
+
+**To Test:** Get a Gemini API key and add to `.env.local` (see [.env.example](./.env.example))
 
 ## 🎨 Design System
 
@@ -208,16 +265,8 @@ src/
 └── styles/         # Global styles
 ```
 
-### Automation
-The project includes automation scripts that use rotating AI agents (Gemini, Codex, Claude) to continuously develop features every 30-35 minutes:
-
-```bash
-# Run once
-python automation/agent_runner.py --once
-
-# Run continuously
-python automation/agent_runner.py
-```
+### Automation (Not Implemented)
+The project includes planning scripts in `automation/` but they are **skeleton implementations** that create TODO files, not actual AI agent orchestration. True agent automation is part of [Epic E004](./docs/epics/E004-agent-orchestration.md) (not yet built).
 
 ## 📈 Performance Guidelines
 
@@ -235,28 +284,40 @@ python automation/agent_runner.py
 
 ## 🗺️ Roadmap
 
-### Phase 1 (MVP) ✅
-- [x] Core block system
-- [x] Graph visualization
-- [x] Document compositor
-- [x] LLM chunking
-- [x] Dashboard composition
-- [x] Local storage persistence
+**See [ROADMAP.md](./ROADMAP.md) for full details and [GAP_ANALYSIS.md](./GAP_ANALYSIS.md) for reality check**
 
-### Phase 2 (Enhancement)
-- [ ] Neo4j backend integration
-- [ ] Advanced LLM features (75% automation)
-- [ ] Collaborative editing
-- [ ] Version control system
-- [ ] Conflict resolution UI
-- [ ] Export to PDF/DOCX
+### Phase 1: Validate Prototype (Current - 1-2 weeks)
+- [ ] Test LLM integration with real Gemini API key
+- [ ] Add integration tests for document assembly
+- [ ] Fix remaining UI bugs (keyboard shortcuts)
+- [ ] Increase test coverage to 50%+
+- [ ] Manual testing of all features
 
-### Phase 3 (Scale)
-- [ ] Multi-user support
-- [ ] Real-time sync
-- [ ] Plugin system
-- [ ] API endpoints
-- [ ] Mobile applications
+### Phase 2: Backend Foundation (2-4 weeks)
+- [ ] Add Next.js API routes
+- [ ] Implement database layer (Neo4j or PostgreSQL)
+- [ ] Basic authentication
+- [ ] Migrate from localStorage to backend
+
+### Phase 3: Governance Minimal (4-6 weeks)
+- [ ] Audit trail (C005)
+- [ ] Basic authority chain (C002)
+- [ ] Immutability enforcement
+- [ ] Version tracking
+
+### Phase 4: LLM Integration Verified (2-3 weeks)
+- [ ] Test and fix document chunking
+- [ ] Add relationship extraction
+- [ ] Implement tag suggestions
+- [ ] Verify accuracy with real documents
+
+### Future Phases
+- Phase 5: Graph algorithms and layouts
+- Phase 6: Knowledge decay tracking
+- Phase 7: Agent orchestration
+- Phase 8: Multi-user and real-time sync
+
+**Reality:** We have ~30% of the documented vision. This is a solid foundation, not a complete system.
 
 ## 🤝 Contributing
 
