@@ -12,10 +12,7 @@ import {
   Lock,
   Shield,
   Edit3,
-  Trash2,
-  Link2,
-  Tag as TagIcon,
-  ChevronRight
+  Trash2
 } from 'lucide-react';
 import { Block as BlockType, ImmutabilityLevel, BlockType as BType } from '@/types';
 import { cn } from '@/lib/utils';
@@ -65,6 +62,17 @@ export const Block: React.FC<BlockProps> = ({
     setIsFlipped(!isFlipped);
     onDoubleClick?.();
   }, [isFlipped, onDoubleClick]);
+
+  // Handle keyboard flip
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    // Prevent triggering from child buttons
+    if (e.target !== e.currentTarget) return;
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleDoubleClick();
+    }
+  }, [handleDoubleClick]);
 
   // Get block type color
   const getTypeColor = useCallback(() => {
@@ -157,11 +165,15 @@ export const Block: React.FC<BlockProps> = ({
     <div className="block-3d-container w-80" ref={blockRef}>
       <motion.div
         className={cn(
-          'block-flipper relative h-48',
+          'block-flipper relative h-48 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none rounded-xl',
           isFlipped && 'flipped',
           isDragging && 'drag-preview'
         )}
         onDoubleClick={handleDoubleClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="button"
+        aria-label={`Block: ${block.title}`}
         whileHover={{ scale: isDragging ? 1 : 1.02 }}
         whileTap={{ scale: 0.98 }}
         initial={{ opacity: 0, y: 20 }}
