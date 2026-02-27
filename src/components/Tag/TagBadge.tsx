@@ -83,6 +83,7 @@ export const TagBadge: React.FC<TagBadgeProps> = ({
             onRemove?.();
           }}
           className="ml-1 hover:opacity-100 opacity-60 transition-opacity"
+          aria-label={`Remove tag ${tag.label}`}
         >
           <X className="w-3 h-3" />
         </button>
