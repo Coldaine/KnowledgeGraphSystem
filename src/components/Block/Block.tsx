@@ -13,9 +13,6 @@ import {
   Shield,
   Edit3,
   Trash2,
-  Link2,
-  Tag as TagIcon,
-  ChevronRight
 } from 'lucide-react';
 import { Block as BlockType, ImmutabilityLevel, BlockType as BType } from '@/types';
 import { cn } from '@/lib/utils';
@@ -65,6 +62,21 @@ export const Block: React.FC<BlockProps> = ({
     setIsFlipped(!isFlipped);
     onDoubleClick?.();
   }, [isFlipped, onDoubleClick]);
+
+  // Handle keyboard navigation
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      // Prevent child events from bubbling up
+      if (e.target !== e.currentTarget) return;
+
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onSelect?.();
+        handleDoubleClick();
+      }
+    },
+    [onSelect, handleDoubleClick]
+  );
 
   // Get block type color
   const getTypeColor = useCallback(() => {
@@ -156,11 +168,16 @@ export const Block: React.FC<BlockProps> = ({
   return (
     <div className="block-3d-container w-80" ref={blockRef}>
       <motion.div
+        role="button"
+        tabIndex={0}
+        aria-label={`Knowledge block: ${block.title}`}
         className={cn(
-          'block-flipper relative h-48',
+          'block-flipper relative h-48 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl',
           isFlipped && 'flipped',
           isDragging && 'drag-preview'
         )}
+        onKeyDown={handleKeyDown}
+        onClick={onSelect}
         onDoubleClick={handleDoubleClick}
         whileHover={{ scale: isDragging ? 1 : 1.02 }}
         whileTap={{ scale: 0.98 }}
@@ -194,10 +211,15 @@ export const Block: React.FC<BlockProps> = ({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onEdit?.();
+                if (onEdit) {
+                  onEdit();
+                } else {
+                  setIsEditing(true);
+                }
               }}
               className="p-1 hover:bg-white/10 rounded transition-colors"
               disabled={block.immutability === ImmutabilityLevel.IMMUTABLE}
+              aria-label="Edit block"
             >
               <MoreVertical className="w-4 h-4 text-text-300" />
             </button>
