@@ -8,6 +8,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { enableMapSet } from 'immer';
 import {
   Block,
   Edge,
@@ -24,6 +25,8 @@ import {
   TagGroup,
 } from '@/types';
 import { nanoid } from 'nanoid';
+
+enableMapSet();
 
 interface BlockStore {
   // Data
@@ -443,11 +446,11 @@ export const useBlockStore = create<BlockStore>()(
         serialize: (state) =>
           JSON.stringify({
             ...state,
-            blocks: Array.from(state.blocks.entries()),
-            edges: Array.from(state.edges.entries()),
-            tags: Array.from(state.tags.entries()),
-            visibleBlockIds: Array.from(state.visibleBlockIds),
-            visibleEdgeIds: Array.from(state.visibleEdgeIds),
+            blocks: Array.from(state.blocks?.entries() || []),
+            edges: Array.from(state.edges?.entries() || []),
+            tags: Array.from(state.tags?.entries() || []),
+            visibleBlockIds: Array.from(state.visibleBlockIds || []),
+            visibleEdgeIds: Array.from(state.visibleEdgeIds || []),
           }),
         deserialize: (str) => {
           const parsed = JSON.parse(str);
