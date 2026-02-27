@@ -13,9 +13,6 @@ import {
   Shield,
   Edit3,
   Trash2,
-  Link2,
-  Tag as TagIcon,
-  ChevronRight
 } from 'lucide-react';
 import { Block as BlockType, ImmutabilityLevel, BlockType as BType } from '@/types';
 import { cn } from '@/lib/utils';
@@ -120,8 +117,17 @@ export const Block: React.FC<BlockProps> = ({
   if (viewMode === 'compact') {
     return (
       <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Select block: ${block.title}`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onSelect?.();
+          }
+        }}
         className={cn(
-          'glass-card p-2 cursor-pointer',
+          'glass-card p-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
           getTypeColor(),
           isSelected && 'ring-2 ring-primary',
           className
