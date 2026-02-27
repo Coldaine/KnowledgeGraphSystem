@@ -1,0 +1,3 @@
+## 2024-05-22 - Graph Node Accessibility Pattern
+**Learning:** Custom React Flow nodes (`Block.tsx`) require explicit `tabIndex={0}`, `role="button"`, and `onKeyDown` handlers for internal interactions (like flipping cards) to be keyboard accessible. React Flow handles node selection, but custom interactive behaviors within the node are invisible to keyboard users without these attributes.
+**Action:** Always wrap interactive custom node content in a focusable container with proper ARIA attributes and keyboard event listeners, ensuring consistency between mouse (double-click) and keyboard (Enter/Space) interactions.
