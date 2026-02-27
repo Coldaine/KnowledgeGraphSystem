@@ -66,6 +66,14 @@ export const Block: React.FC<BlockProps> = ({
     onDoubleClick?.();
   }, [isFlipped, onDoubleClick]);
 
+  // Handle keyboard interaction
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onSelect?.();
+    }
+  }, [onSelect]);
+
   // Get block type color
   const getTypeColor = useCallback(() => {
     switch (block.type) {
@@ -157,11 +165,15 @@ export const Block: React.FC<BlockProps> = ({
     <div className="block-3d-container w-80" ref={blockRef}>
       <motion.div
         className={cn(
-          'block-flipper relative h-48',
+          'block-flipper relative h-48 rounded-glass focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
           isFlipped && 'flipped',
           isDragging && 'drag-preview'
         )}
         onDoubleClick={handleDoubleClick}
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        role="button"
+        aria-label={`Knowledge block: ${block.title}`}
         whileHover={{ scale: isDragging ? 1 : 1.02 }}
         whileTap={{ scale: 0.98 }}
         initial={{ opacity: 0, y: 20 }}
