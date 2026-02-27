@@ -13,7 +13,6 @@ import ReactFlow, {
   Background,
   Controls,
   MiniMap,
-  Panel,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -326,18 +325,18 @@ export const GraphView: React.FC = () => {
           />
 
           {/* Custom Controls Panel */}
-          <Panel position="top-left" className="space-y-2">
+          <div className="absolute top-4 left-4 z-10 space-y-2">
             <GraphControls />
-          </Panel>
+          </div>
 
           {/* Performance Monitor */}
-          <Panel position="bottom-right" className="glass-panel p-2">
+          <div className="absolute bottom-4 right-4 z-10 glass-panel p-2">
             <div className="text-xs text-text-300">
               <div>FPS: {fps.toFixed(0)}</div>
               <div>Nodes: {nodes.length}</div>
               <div>Edges: {flowEdges.length}</div>
             </div>
-          </Panel>
+          </div>
         </ReactFlow>
       </ReactFlowProvider>
     </div>

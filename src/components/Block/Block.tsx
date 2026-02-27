@@ -13,9 +13,6 @@ import {
   Shield,
   Edit3,
   Trash2,
-  Link2,
-  Tag as TagIcon,
-  ChevronRight
 } from 'lucide-react';
 import { Block as BlockType, ImmutabilityLevel, BlockType as BType } from '@/types';
 import { cn } from '@/lib/utils';
@@ -120,13 +117,22 @@ export const Block: React.FC<BlockProps> = ({
   if (viewMode === 'compact') {
     return (
       <div
+        role="button"
+        tabIndex={0}
+        aria-label={`Knowledge block: ${block.title}`}
         className={cn(
-          'glass-card p-2 cursor-pointer',
+          'glass-card p-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
           getTypeColor(),
           isSelected && 'ring-2 ring-primary',
           className
         )}
         onClick={onSelect}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onSelect?.();
+          }
+        }}
       >
         <div className="flex items-center gap-2">
           <ImmutabilityIcon />
@@ -156,12 +162,24 @@ export const Block: React.FC<BlockProps> = ({
   return (
     <div className="block-3d-container w-80" ref={blockRef}>
       <motion.div
+        role="button"
+        tabIndex={0}
+        aria-label={`Knowledge block: ${block.title}`}
         className={cn(
-          'block-flipper relative h-48',
+          'block-flipper relative h-48 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-xl',
           isFlipped && 'flipped',
           isDragging && 'drag-preview'
         )}
+        onClick={onSelect}
         onDoubleClick={handleDoubleClick}
+        onKeyDown={(e) => {
+          if (e.target === e.currentTarget) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleDoubleClick();
+            }
+          }
+        }}
         whileHover={{ scale: isDragging ? 1 : 1.02 }}
         whileTap={{ scale: 0.98 }}
         initial={{ opacity: 0, y: 20 }}
