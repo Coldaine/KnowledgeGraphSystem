@@ -79,3 +79,9 @@ logs/
 # Local data
 /data/local/
 /cache/
+# Generated metadata - do not commit
+_open_prs.json
+_open_issues.json
+issues.json
+_repo_metadata.json
+
