@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useCallback, useMemo, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   MoreVertical,
   Lock,
@@ -50,6 +50,7 @@ export const Block: React.FC<BlockProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const blockRef = useRef<HTMLDivElement>(null);
   const { updateBlock, getInheritedTags } = useBlockStore();
+  const shouldReduceMotion = useReducedMotion();
 
   // Get all tags (explicit + inherited)
   const effectiveTags = useMemo(() => {
@@ -121,12 +122,21 @@ export const Block: React.FC<BlockProps> = ({
     return (
       <div
         className={cn(
-          'glass-card p-2 cursor-pointer',
+          'glass-card p-2 cursor-pointer focus-visible:ring-2 focus-visible:outline-none contrast-more:border contrast-more:border-current',
           getTypeColor(),
-          isSelected && 'ring-2 ring-primary',
+          isSelected && 'ring-2 ring-primary contrast-more:ring-4',
           className
         )}
         onClick={onSelect}
+        role="button"
+        tabIndex={0}
+        aria-label={`Select block: ${block.title}`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onSelect?.();
+          }
+        }}
       >
         <div className="flex items-center gap-2">
           <ImmutabilityIcon />
@@ -157,16 +167,26 @@ export const Block: React.FC<BlockProps> = ({
     <div className="block-3d-container w-80" ref={blockRef}>
       <motion.div
         className={cn(
-          'block-flipper relative h-48',
+          'block-flipper relative h-48 focus-visible:ring-2 focus-visible:outline-none rounded-2xl contrast-more:border contrast-more:border-current',
           isFlipped && 'flipped',
           isDragging && 'drag-preview'
         )}
         onDoubleClick={handleDoubleClick}
-        whileHover={{ scale: isDragging ? 1 : 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        initial={{ opacity: 0, y: 20 }}
+        role="button"
+        tabIndex={0}
+        aria-label={`Block card: ${block.title}`}
+        onKeyDown={(e) => {
+          if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            onSelect?.();
+          }
+        }}
+        whileHover={shouldReduceMotion ? {} : { scale: isDragging ? 1 : 1.02 }}
+        whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
+        initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
+        exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -20 }}
+        transition={shouldReduceMotion ? { duration: 0 } : undefined}
       >
         {/* Front Face */}
         <div
@@ -174,7 +194,7 @@ export const Block: React.FC<BlockProps> = ({
             'block-front glass-card h-full',
             getTypeColor(),
             getImmutabilityClass(),
-            isSelected && 'ring-2 ring-primary shadow-glow-md',
+            isSelected && 'ring-2 ring-primary shadow-glow-md contrast-more:ring-4',
             className
           )}
         >

@@ -92,7 +92,7 @@ export const GraphControls: React.FC = () => {
       <div className="glass-panel p-2 flex flex-col gap-1">
         <button
           onClick={() => fitView({ padding: 0.2 })}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-300 hover:bg-white/10 rounded transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-300 hover:bg-white/10 rounded transition-colors focus-visible:ring-2 focus-visible:outline-none contrast-more:border contrast-more:border-current"
           title="Fit View"
         >
           <Maximize className="w-4 h-4" />
@@ -100,7 +100,7 @@ export const GraphControls: React.FC = () => {
         </button>
         <button
           onClick={() => zoomIn()}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-300 hover:bg-white/10 rounded transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-300 hover:bg-white/10 rounded transition-colors focus-visible:ring-2 focus-visible:outline-none contrast-more:border contrast-more:border-current"
           title="Zoom In"
         >
           <ZoomIn className="w-4 h-4" />
@@ -108,7 +108,7 @@ export const GraphControls: React.FC = () => {
         </button>
         <button
           onClick={() => zoomOut()}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-300 hover:bg-white/10 rounded transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-300 hover:bg-white/10 rounded transition-colors focus-visible:ring-2 focus-visible:outline-none contrast-more:border contrast-more:border-current"
           title="Zoom Out"
         >
           <ZoomOut className="w-4 h-4" />
@@ -116,7 +116,7 @@ export const GraphControls: React.FC = () => {
         </button>
         <button
           onClick={() => setCenter(400, 300, { zoom: 1 })}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-300 hover:bg-white/10 rounded transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-300 hover:bg-white/10 rounded transition-colors focus-visible:ring-2 focus-visible:outline-none contrast-more:border contrast-more:border-current"
           title="Reset View"
         >
           <RefreshCw className="w-4 h-4" />
@@ -129,7 +129,7 @@ export const GraphControls: React.FC = () => {
         <button
           onClick={() => toggleSetting('showStructural')}
           className={cn(
-            'flex items-center gap-2 px-3 py-1.5 text-sm rounded transition-colors',
+            'flex items-center gap-2 px-3 py-1.5 text-sm rounded transition-colors focus-visible:ring-2 focus-visible:outline-none contrast-more:border contrast-more:border-current',
             settings.showStructural
               ? 'bg-primary/20 text-primary'
               : 'text-text-300 hover:bg-white/10'
@@ -142,7 +142,7 @@ export const GraphControls: React.FC = () => {
         <button
           onClick={() => toggleSetting('showSemantic')}
           className={cn(
-            'flex items-center gap-2 px-3 py-1.5 text-sm rounded transition-colors',
+            'flex items-center gap-2 px-3 py-1.5 text-sm rounded transition-colors focus-visible:ring-2 focus-visible:outline-none contrast-more:border contrast-more:border-current',
             settings.showSemantic
               ? 'bg-primary/20 text-primary'
               : 'text-text-300 hover:bg-white/10'
@@ -155,7 +155,7 @@ export const GraphControls: React.FC = () => {
         <button
           onClick={() => toggleSetting('showLabels')}
           className={cn(
-            'flex items-center gap-2 px-3 py-1.5 text-sm rounded transition-colors',
+            'flex items-center gap-2 px-3 py-1.5 text-sm rounded transition-colors focus-visible:ring-2 focus-visible:outline-none contrast-more:border contrast-more:border-current',
             settings.showLabels
               ? 'bg-primary/20 text-primary'
               : 'text-text-300 hover:bg-white/10'
@@ -175,7 +175,7 @@ export const GraphControls: React.FC = () => {
       <div className="glass-panel p-2 flex flex-col gap-1">
         <button
           onClick={handleAutoLayout}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-300 hover:bg-white/10 rounded transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-300 hover:bg-white/10 rounded transition-colors focus-visible:ring-2 focus-visible:outline-none contrast-more:border contrast-more:border-current"
           title="Auto Layout"
         >
           <Shuffle className="w-4 h-4" />
@@ -184,7 +184,7 @@ export const GraphControls: React.FC = () => {
         <button
           onClick={() => toggleSetting('physicsEnabled')}
           className={cn(
-            'flex items-center gap-2 px-3 py-1.5 text-sm rounded transition-colors',
+            'flex items-center gap-2 px-3 py-1.5 text-sm rounded transition-colors focus-visible:ring-2 focus-visible:outline-none contrast-more:border contrast-more:border-current',
             settings.physicsEnabled
               ? 'bg-primary/20 text-primary'
               : 'text-text-300 hover:bg-white/10'
@@ -204,7 +204,7 @@ export const GraphControls: React.FC = () => {
       <div className="glass-panel p-2 flex flex-col gap-1">
         <button
           onClick={handleExport}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-300 hover:bg-white/10 rounded transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 text-sm text-text-300 hover:bg-white/10 rounded transition-colors focus-visible:ring-2 focus-visible:outline-none contrast-more:border contrast-more:border-current"
           title="Export Graph"
         >
           <Download className="w-4 h-4" />
@@ -213,7 +213,7 @@ export const GraphControls: React.FC = () => {
         <button
           onClick={() => setShowSettings(!showSettings)}
           className={cn(
-            'flex items-center gap-2 px-3 py-1.5 text-sm rounded transition-colors',
+            'flex items-center gap-2 px-3 py-1.5 text-sm rounded transition-colors focus-visible:ring-2 focus-visible:outline-none contrast-more:border contrast-more:border-current',
             showSettings
               ? 'bg-primary/20 text-primary'
               : 'text-text-300 hover:bg-white/10'
