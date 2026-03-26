@@ -8,6 +8,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { announceToScreenReader } from '@/components/AriaLiveRegion';
 import {
   Block,
   Edge,
@@ -123,6 +124,10 @@ export const useBlockStore = create<BlockStore>()(
             state.blocks.set(block.id, block);
           });
 
+          if (typeof window !== 'undefined') {
+            announceToScreenReader(`Created block: ${block.title}`);
+          }
+
           return block;
         },
 
@@ -150,6 +155,10 @@ export const useBlockStore = create<BlockStore>()(
                   state.edges.delete(edgeId);
                 }
               });
+
+              if (typeof window !== 'undefined') {
+                announceToScreenReader(`Deleted block: ${block.title}`);
+              }
             }
           });
         },
@@ -305,6 +314,12 @@ export const useBlockStore = create<BlockStore>()(
             state.selectedBlockId = blockId;
             state.selectedEdgeId = null;
           });
+          if (blockId && typeof window !== 'undefined') {
+            const block = get().blocks.get(blockId);
+            if (block) {
+              announceToScreenReader(`Selected block: ${block.title}`);
+            }
+          }
         },
 
         selectEdge: (edgeId) => {
