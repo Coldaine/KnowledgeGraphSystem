@@ -1,5 +1,27 @@
 # KnowledgeGraphSystem Agent Notes
 
+## 2026-04-03 — PR #54 worker run (w-167f)
+
+- Task: `w-167f` (worklog) — Implement authority-level enforcement (validateWrite pre-write hook)
+- PR: https://github.com/Coldaine/KnowledgeGraphSystem/pull/54
+- Branch: `worker/knowledgegraphsystem/w-167f-authority-write-guard`
+- Action taken:
+  - Implemented Contract C002 INV-C002-03 pre-write hook in `src/stores/blockStore.ts`
+  - Added `validateWrite()` function exported for external use
+  - Pre-write validation in `updateBlock()` and `deleteBlock()` — returns `{success: false, reason}` when blocked
+  - Added `dispatchEscalation()` for INV-C002-05 compliance
+  - Added `escalationEvents` Map and `currentPrincipal` state to BlockStore
+  - Added 20 unit tests in `src/stores/__tests__/blockStore.authority.test.ts`
+  - All 38 tests pass (6 suites)
+- Authority mappings:
+  - MUTABLE → VIEWER, LOCKED → CONTRIBUTOR, IMMUTABLE → SENIOR
+  - DRONE → VIEWER, ARCHITECT → CONTRIBUTOR, JUDGE → SENIOR
+- Validation:
+  - `npm test` — 38 tests passing
+  - Existing tests unchanged, no regressions
+- PR merged commit: `5d615b1` — CLEAN, MERGEABLE, no review needed
+- Pre-existing type-check errors exist in multiple files (Dashboard.tsx, GraphView.tsx, compositor, llm, templates) — not introduced by PR #54
+
 ## 2026-03-26 — PR #51 merge worker run
 
 - Task: `w-ae42` (worklog)
