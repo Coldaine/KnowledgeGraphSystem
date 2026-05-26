@@ -19,7 +19,7 @@ The graph view is the primary interface. Document view, Brainstorm mode, and Fol
 | Document view page | Placeholder ("Coming soon") |
 | Brainstorm mode page | Placeholder ("Coming soon") |
 | Folder view page | Placeholder ("Coming soon") |
-| LLM chunking (`lib/llm/chunking.ts`) | Skeleton |
+| LLM chunking (`lib/llm/chunking.ts`) | First pass / unwired |
 | Neo4j backend | Not started |
 
 ## Architecture
